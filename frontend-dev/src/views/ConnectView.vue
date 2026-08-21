@@ -10,6 +10,7 @@ import AppTag from '@/components/base/AppTag.vue'
 import AppSwitch from '@/components/base/AppSwitch.vue'
 import AppSegmented from '@/components/base/AppSegmented.vue'
 import Stepper from '@/components/base/Stepper.vue'
+import { t } from '@/i18n'
 import { hexA } from '@/utils/format'
 import type { Agent } from '@/types'
 
@@ -31,7 +32,7 @@ const publishing = ref(false)
 const picks = ref<Candidate[]>([])
 const visibility = ref<'public' | 'enterprise'>('public')
 
-const STEPS = ['扫描设备', '配置节点', '发布上线']
+const STEPS = computed(() => [t('扫描设备'), t('配置节点'), t('发布上线')])
 
 function buildCandidates() {
   picks.value = profile.agents.map((a, i) => ({
@@ -55,13 +56,13 @@ const pickedCount = computed(() => picks.value.filter((p) => p.picked).length)
 
 async function publish() {
   if (pickedCount.value === 0) {
-    ui.toast({ type: 'warn', title: '请至少选择一个 Agent' })
+    ui.toast({ type: 'warn', title: t('请至少选择一个 Agent') })
     return
   }
   publishing.value = true
   const picked = picks.value.filter((p) => p.picked)
   await profile.publish({
-    name: profile.profile.name + ' 的主节点',
+    name: profile.profile.name + t('的主节点'),
     ip: picked[0].host,
     port: picked[0].port,
     runtime: picked.map((p) => p.agent.name).join(' · '),
@@ -71,7 +72,7 @@ async function publish() {
   })
   publishing.value = false
   step.value = 2
-  ui.toast({ type: 'success', title: '发布成功', desc: '节点已上线，可在个人主页查看与调用' })
+  ui.toast({ type: 'success', title: t('发布成功'), desc: t('节点已上线，可在个人主页查看与调用') })
 }
 </script>
 
@@ -79,8 +80,8 @@ async function publish() {
   <div class="page page-narrow">
     <div class="page-head">
       <div>
-        <h1 class="page-title">接入 Agent</h1>
-        <p class="page-sub">扫描局域网或云端设备，把本地 Agent 发布为可调用的在线节点</p>
+        <h1 class="page-title">{{ t('接入 Agent') }}</h1>
+        <p class="page-sub">{{ t('扫描局域网或云端设备，把本地 Agent 发布为可调用的在线节点') }}</p>
       </div>
     </div>
 
@@ -93,15 +94,15 @@ async function publish() {
       <template #head>
         <div class="card-title">
           <AppIcon name="server" :size="16" class="ico" />
-          <span>当前已接入节点</span>
+          <span>{{ t('当前已接入节点') }}</span>
         </div>
-        <AppTag variant="success" dot>在线</AppTag>
+        <AppTag variant="success" dot>{{ t('在线') }}</AppTag>
       </template>
       <div class="conn-body">
         <div class="conn-name">{{ profile.node.name }}</div>
         <div class="conn-ip mono">{{ profile.node.ip }}:{{ profile.node.port }}</div>
         <div class="conn-actions">
-          <AppButton variant="ghost" size="sm" icon="refresh" @click="startScan">重新扫描配置</AppButton>
+          <AppButton variant="ghost" size="sm" icon="refresh" @click="startScan">{{ t('重新扫描配置') }}</AppButton>
         </div>
       </div>
     </AppCard>
@@ -112,11 +113,11 @@ async function publish() {
         <span class="hero-scan__icon" :class="{ spin: scanning }">
           <AppIcon name="scan" :size="30" />
         </span>
-        <div class="hero-scan__title">{{ scanning ? '正在扫描局域网设备…' : '扫描本地与云端设备' }}</div>
+        <div class="hero-scan__title">{{ scanning ? t('正在扫描局域网设备…') : t('扫描本地与云端设备') }}</div>
         <p class="hero-scan__desc">
-          将自动发现安装了 Resolve 运行时的 Agent（Codex、Claude Code、OpenClaw、Hermes），支持多设备接入。
+          {{ t('将自动发现安装了 Resolve 运行时的 Agent（Codex、Claude Code、OpenClaw、Hermes），支持多设备接入。') }}
         </p>
-        <AppButton variant="primary" icon="scan" :loading="scanning" @click="startScan">开始扫描</AppButton>
+        <AppButton variant="primary" icon="scan" :loading="scanning" @click="startScan">{{ t('开始扫描') }}</AppButton>
       </div>
     </AppCard>
 
@@ -126,9 +127,9 @@ async function publish() {
         <template #head>
           <div class="card-title">
             <AppIcon name="cpu" :size="16" class="ico" />
-            <span>发现 {{ picks.length }} 个 Agent</span>
+            <span>{{ t('发现 {n} 个 Agent', { n: picks.length }) }}</span>
           </div>
-          <span class="card-sub">勾选要上线的设备</span>
+          <span class="card-sub">{{ t('勾选要上线的设备') }}</span>
         </template>
         <div class="devs">
           <div v-for="(p, i) in picks" :key="p.agent.id" class="dev">
@@ -146,12 +147,12 @@ async function publish() {
 
       <AppCard pad="lg">
         <div class="form-row">
-          <div class="form-row__label">可见范围</div>
+          <div class="form-row__label">{{ t('可见范围') }}</div>
           <AppSegmented
             :model-value="visibility"
             :options="[
-              { value: 'public', label: '全网公开', icon: 'globe' },
-              { value: 'enterprise', label: '仅企业内网', icon: 'lock' },
+              { value: 'public', label: t('全网公开'), icon: 'globe' },
+              { value: 'enterprise', label: t('仅企业内网'), icon: 'lock' },
             ]"
             @update:model-value="(v: string) => (visibility = v as 'public' | 'enterprise')"
           />
@@ -159,9 +160,9 @@ async function publish() {
       </AppCard>
 
       <div class="publish-bar">
-        <span class="publish-bar__count">已选 <b class="num">{{ pickedCount }}</b> 个 Agent</span>
+        <span class="publish-bar__count">{{ t('已选 {n} 个 Agent', { n: pickedCount }) }}</span>
         <AppButton variant="primary" icon="send" :loading="publishing" :disabled="pickedCount === 0" @click="publish">
-          发布并激活
+          {{ t('发布并激活') }}
         </AppButton>
       </div>
     </div>
@@ -170,13 +171,13 @@ async function publish() {
     <AppCard v-if="step === 2" pad="lg">
       <div class="hero-done">
         <span class="hero-done__icon"><AppIcon name="check-circle" :size="32" /></span>
-        <div class="hero-done__title">节点已上线</div>
+        <div class="hero-done__title">{{ t('节点已上线') }}</div>
         <p class="hero-done__desc">
-          {{ profile.node.name }} · {{ profile.node.ip }}:{{ profile.node.port }}，已关联 {{ profile.node.agents.length }} 个 Agent。
+          {{ profile.node.name }} · {{ profile.node.ip }}:{{ profile.node.port }}，{{ t('已关联 {n} 个 Agent', { n: profile.node.agents.length }) }}。
         </p>
         <div class="hero-done__actions">
-          <AppButton icon="user" @click="router.push('/u/chenmo-dev')">查看个人主页</AppButton>
-          <AppButton variant="ghost" @click="router.push('/market')">去 Agent 市场</AppButton>
+          <AppButton icon="user" @click="router.push('/u/chenmo-dev')">{{ t('查看个人主页') }}</AppButton>
+          <AppButton variant="ghost" @click="router.push('/market')">{{ t('去 Agent 市场') }}</AppButton>
         </div>
       </div>
     </AppCard>

@@ -3,6 +3,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useUiStore } from '@/stores/ui'
 import { useAuthStore } from '@/stores/auth'
 import { useWalletStore } from '@/stores/wallet'
+import { t, locale, setLocale } from '@/i18n'
 import AppIcon from '@/components/icons/AppIcon.vue'
 import AppAvatar from '@/components/base/AppAvatar.vue'
 import AppDropdown from '@/components/base/AppDropdown.vue'
@@ -16,36 +17,54 @@ const route = useRoute()
 
 function logout() {
   auth.logout()
-  ui.toast({ type: 'info', title: '已退出登录' })
+  ui.toast({ type: 'info', title: t('已退出登录') })
   router.push('/login')
 }
 
 const userMenu = () => [
-  { label: '个人主页', icon: 'user', onClick: () => router.push('/u/chenmo-dev') },
-  { label: '我的钱包', icon: 'wallet', onClick: () => router.push('/wallet') },
-  { label: '企业版', icon: 'building', onClick: () => router.push('/enterprise') },
-  { label: '退出登录', icon: 'logout', danger: true, onClick: logout },
+  { label: t('个人主页'), icon: 'user', onClick: () => router.push('/u/chenmo-dev') },
+  { label: t('我的钱包'), icon: 'wallet', onClick: () => router.push('/wallet') },
+  { label: t('企业版'), icon: 'building', onClick: () => router.push('/enterprise') },
+  { label: t('退出登录'), icon: 'logout', danger: true, onClick: logout },
 ]
 
 function onBell() {
-  ui.toast({ type: 'info', title: '暂无新通知', desc: '有 Agent 被调用或充值到账时会第一时间通知你' })
+  ui.toast({ type: 'info', title: t('暂无新通知'), desc: t('有 Agent 被调用或充值到账时会第一时间通知你') })
+}
+
+function toggleLocale() {
+  setLocale(locale.value === 'zh' ? 'en' : 'zh')
 }
 </script>
 
 <template>
   <header class="topbar">
     <div class="topbar__left">
-      <button v-if="ui.sidebarCollapsed || ui.isMobile" class="topbar__menu" aria-label="打开导航菜单" @click="ui.toggleSidebar()">
+      <button v-if="ui.sidebarCollapsed || ui.isMobile" class="topbar__menu" :aria-label="t('打开导航菜单')" @click="ui.toggleSidebar()">
         <AppIcon name="list" :size="18" />
       </button>
-      <span class="topbar__title">{{ String(route.meta.title || 'Resolve') }}</span>
+      <span class="topbar__title">{{ t(String(route.meta.title || 'Resolve')) }}</span>
     </div>
     <div class="topbar__right">
+      <button v-if="!ui.isMobile" class="topbar__icon" :aria-label="t('语言')" :title="t('语言')" @click="toggleLocale">
+        <AppIcon name="globe" :size="18" />
+      </button>
+      <a
+        v-if="!ui.isMobile"
+        class="topbar__icon"
+        href="https://github.com/1parado/resolve"
+        target="_blank"
+        rel="noopener"
+        :aria-label="t('GitHub 仓库')"
+        :title="t('GitHub 仓库')"
+      >
+        <AppIcon name="github" brand :size="18" />
+      </a>
       <button v-if="!ui.isMobile" class="topbar__chip" @click="router.push('/wallet')">
         <AppIcon name="coins" :size="15" />
         <span class="num">{{ money(wallet.wallet.balance) }}</span>
       </button>
-      <button class="topbar__icon" aria-label="通知" @click="onBell">
+      <button class="topbar__icon" :aria-label="t('通知')" @click="onBell">
         <AppIcon name="bell" :size="18" />
         <i class="topbar__badge" />
       </button>

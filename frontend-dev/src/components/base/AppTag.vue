@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { t } from '@/i18n'
 import AppIcon from '@/components/icons/AppIcon.vue'
 
 type Variant = 'brand' | 'success' | 'warn' | 'danger' | 'default' | 'weak'
@@ -25,7 +26,7 @@ const cls = computed(() => ['tag', 'tag--' + props.variant])
     <AppIcon v-if="brandIcon" :name="brandIcon" brand :size="13" />
     <AppIcon v-else-if="icon" :name="icon" :size="13" />
     <slot />
-    <button v-if="closable" class="tag__close" aria-label="移除" @click="emit('close')">
+    <button v-if="closable" class="tag__close" :aria-label="t('移除')" @click="emit('close')">
       <AppIcon name="x" :size="11" />
     </button>
   </span>

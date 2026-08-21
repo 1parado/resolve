@@ -12,6 +12,7 @@ import AppModal from '@/components/base/AppModal.vue'
 import Rating from '@/components/base/Rating.vue'
 import StatusDot from '@/components/base/StatusDot.vue'
 import EmptyState from '@/components/base/EmptyState.vue'
+import { t } from '@/i18n'
 import { fmtNum, hexA, identicon, money } from '@/utils/format'
 import type { MarketItem } from '@/types'
 
@@ -37,17 +38,17 @@ async function doCall() {
   if (!item.value) return
   const est = estCost(item.value)
   if (wallet.wallet.balance < est) {
-    ui.toast({ type: 'warn', title: '余额不足', desc: '本次调用预计约 ' + money(est), action: { label: '去充值', onClick: () => router.push('/wallet') } })
+    ui.toast({ type: 'warn', title: t('余额不足'), desc: t('本次调用预计约 {e}', { e: money(est) }), action: { label: t('去充值'), onClick: () => router.push('/wallet') } })
     return
   }
   if (!prompt.value.trim()) {
-    ui.toast({ type: 'warn', title: '请先输入任务描述' })
+    ui.toast({ type: 'warn', title: t('请先输入任务描述') })
     return
   }
   calling.value = true
   try {
     const r = await market.runCall(item.value, prompt.value.trim())
-    ui.toast({ type: 'success', title: '调用完成', desc: r.name + ' 本次费用 ' + money(r.finalCost) })
+    ui.toast({ type: 'success', title: t('调用完成'), desc: t('{n} 本次费用 {c}', { n: r.name, c: money(r.finalCost) }) })
     callOpen.value = false
   } finally {
     calling.value = false
@@ -55,7 +56,7 @@ async function doCall() {
 }
 
 function collect() {
-  ui.toast({ type: 'success', title: '已收藏', desc: item.value?.name + ' 已加入收藏，可在后续版本中查看' })
+  ui.toast({ type: 'success', title: t('已收藏'), desc: t('{n} 已加入收藏，可在后续版本中查看', { n: item.value?.name || '' }) })
 }
 </script>
 
@@ -64,9 +65,9 @@ function collect() {
     <EmptyState
       v-if="!item"
       icon="help-circle"
-      title="未找到该 Agent"
-      desc="商品可能已下架或链接有误。"
-      action-text="返回市场"
+      :title="t('未找到该 Agent')"
+      :desc="t('商品可能已下架或链接有误。')"
+      :action-text="t('返回市场')"
       @action="router.push('/market')"
     />
 
@@ -75,7 +76,7 @@ function collect() {
         <div>
           <button class="back" @click="router.push('/market')">
             <AppIcon name="chev-left" :size="15" />
-            <span>返回市场</span>
+            <span>{{ t('返回市场') }}</span>
           </button>
         </div>
       </div>
@@ -88,8 +89,8 @@ function collect() {
           <div class="hero__info">
             <div class="hero__name-row">
               <h2 class="hero__name">{{ item.name }}</h2>
-              <StatusDot :status="item.online ? 'online' : 'offline'" :label="item.online ? '在线' : '维护中'" />
-              <AppTag v-if="item.featured" variant="brand">推荐</AppTag>
+              <StatusDot :status="item.online ? 'online' : 'offline'" :label="item.online ? t('在线') : t('维护中')" />
+              <AppTag v-if="item.featured" variant="brand">{{ t('推荐') }}</AppTag>
             </div>
             <div class="hero__vendor">
               <img class="hero__vendor-avatar" :src="identicon(item.vendorGithub, 64)" alt="" />
@@ -101,14 +102,14 @@ function collect() {
               <span class="num">{{ item.rating.toFixed(1) }}</span>
               <span class="hero__sep" />
               <span class="num">{{ fmtNum(item.orders) }}</span>
-              <span>次调用</span>
+              <span>{{ t('次调用') }}</span>
             </div>
           </div>
           <div class="hero__buy">
             <div class="hero__price num">{{ item.price }}</div>
-            <div class="hero__price-note">按实际用量计费</div>
-            <AppButton variant="primary" size="block" icon="zap" @click="callOpen = true">立即调用</AppButton>
-            <AppButton variant="ghost" size="block" icon="heart" @click="collect">收藏</AppButton>
+            <div class="hero__price-note">{{ t('按实际用量计费') }}</div>
+            <AppButton variant="primary" size="block" icon="zap" @click="callOpen = true">{{ t('立即调用') }}</AppButton>
+            <AppButton variant="ghost" size="block" icon="heart" @click="collect">{{ t('收藏') }}</AppButton>
           </div>
         </div>
       </AppCard>
@@ -117,7 +118,7 @@ function collect() {
         <div class="stack stack-16">
           <AppCard>
             <template #head>
-              <div class="card-title"><AppIcon name="info" :size="16" class="ico" /><span>简介</span></div>
+              <div class="card-title"><AppIcon name="info" :size="16" class="ico" /><span>{{ t('简介') }}</span></div>
             </template>
             <p class="desc">{{ item.desc }}</p>
             <div class="tag-row">
@@ -127,7 +128,7 @@ function collect() {
 
           <AppCard>
             <template #head>
-              <div class="card-title"><AppIcon name="cpu" :size="16" class="ico" /><span>可用模型</span></div>
+              <div class="card-title"><AppIcon name="cpu" :size="16" class="ico" /><span>{{ t('可用模型') }}</span></div>
             </template>
             <div class="models">
               <AppTag v-for="m in item.models" :key="m" variant="weak" class="mono-chip">{{ m }}</AppTag>
@@ -136,13 +137,13 @@ function collect() {
 
           <AppCard>
             <template #head>
-              <div class="card-title"><AppIcon name="gauge" :size="16" class="ico" /><span>服务承诺</span></div>
+              <div class="card-title"><AppIcon name="gauge" :size="16" class="ico" /><span>{{ t('服务承诺') }}</span></div>
             </template>
             <div class="sla">
               <span class="sla__ico"><AppIcon name="shield" :size="18" /></span>
               <div>
                 <div class="sla__text">{{ item.sla }}</div>
-                <div class="sla__sub">超出承诺响应时间可申请退费，结算以实际 token 用量为准</div>
+                <div class="sla__sub">{{ t('超出承诺响应时间可申请退费，结算以实际 token 用量为准') }}</div>
               </div>
             </div>
           </AppCard>
@@ -151,19 +152,19 @@ function collect() {
         <div class="stack stack-16">
           <AppCard>
             <template #head>
-              <div class="card-title"><AppIcon name="coins" :size="16" class="ico" /><span>计费说明</span></div>
+              <div class="card-title"><AppIcon name="coins" :size="16" class="ico" /><span>{{ t('计费说明') }}</span></div>
             </template>
             <div class="bill">
-              <div class="bill__row"><span>计价单位</span><b class="num">{{ item.price }}</b></div>
-              <div class="bill__row"><span>预估单次调用</span><b class="num">{{ money(estCost(item)) }}</b></div>
-              <div class="bill__row"><span>结算周期</span><b>实时 · 余额</b></div>
-              <div class="bill__row"><span>退款政策</span><b>响应超时全额退</b></div>
+              <div class="bill__row"><span>{{ t('计价单位') }}</span><b class="num">{{ item.price }}</b></div>
+              <div class="bill__row"><span>{{ t('预估单次调用') }}</span><b class="num">{{ money(estCost(item)) }}</b></div>
+              <div class="bill__row"><span>{{ t('结算周期') }}</span><b>{{ t('实时 · 余额') }}</b></div>
+              <div class="bill__row"><span>{{ t('退款政策') }}</span><b>{{ t('响应超时全额退') }}</b></div>
             </div>
           </AppCard>
 
           <AppCard>
             <template #head>
-              <div class="card-title"><AppIcon name="user" :size="16" class="ico" /><span>服务商</span></div>
+              <div class="card-title"><AppIcon name="user" :size="16" class="ico" /><span>{{ t('服务商') }}</span></div>
             </template>
             <div class="vendor">
               <img class="vendor__avatar" :src="identicon(item.vendorGithub, 96)" alt="" />
@@ -178,7 +179,7 @@ function collect() {
 
       <AppCard v-if="related.length" pad="none" class="rel-card">
         <template #head>
-          <div class="card-title"><AppIcon name="layers" :size="16" class="ico" /><span>同类推荐</span></div>
+          <div class="card-title"><AppIcon name="layers" :size="16" class="ico" /><span>{{ t('同类推荐') }}</span></div>
         </template>
         <div class="rel-list">
           <button
@@ -201,17 +202,17 @@ function collect() {
         </div>
       </AppCard>
 
-      <AppModal :model-value="callOpen" :title="item.name" :subtitle="'给 ' + item.name + ' 的任务描述'" :width="480" @update:model-value="(v: boolean) => (callOpen = v)">
+      <AppModal :model-value="callOpen" :title="item.name" :subtitle="t('给 {n} 的任务描述', { n: item.name })" :width="480" @update:model-value="(v: boolean) => (callOpen = v)">
         <div class="call">
           <div class="call__est">
             <AppIcon name="coins" :size="17" />
-            <span>预估 <b class="num">{{ money(estCost(item)) }}</b> · 余额 <b class="num">{{ money(wallet.wallet.balance) }}</b></span>
+            <span>{{ t('预估 {e} · 余额 {b}', { e: money(estCost(item)), b: money(wallet.wallet.balance) }) }}</span>
           </div>
-          <textarea v-model="prompt" class="call__prompt" rows="4" placeholder="描述你要完成的任务…" />
+          <textarea v-model="prompt" class="call__prompt" rows="4" :placeholder="t('描述你要完成的任务…')" />
         </div>
         <template #footer>
-          <AppButton variant="ghost" @click="callOpen = false">取消</AppButton>
-          <AppButton variant="primary" icon="send" :loading="calling" @click="doCall">开始调用</AppButton>
+          <AppButton variant="ghost" @click="callOpen = false">{{ t('取消') }}</AppButton>
+          <AppButton variant="primary" icon="send" :loading="calling" @click="doCall">{{ t('开始调用') }}</AppButton>
         </template>
       </AppModal>
     </template>

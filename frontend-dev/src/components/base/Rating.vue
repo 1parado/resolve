@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import AppIcon from '@/components/icons/AppIcon.vue'
+import { t } from '@/i18n'
 
 const props = defineProps<{ value: number }>()
 
@@ -8,7 +9,7 @@ const pct = computed(() => Math.max(0, Math.min(5, props.value)) / 5 * 100)
 </script>
 
 <template>
-  <span class="rating" :aria-label="value.toFixed(1) + ' 分'">
+  <span class="rating" :aria-label="value.toFixed(1) + t('分')">
     <span class="rating__base">
       <AppIcon v-for="i in 5" :key="i" name="star" :size="14" />
     </span>

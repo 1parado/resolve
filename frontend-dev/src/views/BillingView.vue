@@ -6,6 +6,7 @@ import AppCard from '@/components/base/AppCard.vue'
 import AppSegmented from '@/components/base/AppSegmented.vue'
 import AppTag from '@/components/base/AppTag.vue'
 import EmptyState from '@/components/base/EmptyState.vue'
+import { t } from '@/i18n'
 import { money, timeAgo } from '@/utils/format'
 import type { BillingType } from '@/types'
 
@@ -13,12 +14,12 @@ const wallet = useWalletStore()
 
 const type = ref<'all' | BillingType>('all')
 
-const TYPES = [
-  { value: 'all', label: '全部' },
-  { value: 'call', label: '调用' },
-  { value: 'recharge', label: '充值' },
-  { value: 'withdraw', label: '提现' },
-]
+const TYPES = computed(() => [
+  { value: 'all', label: t('全部') },
+  { value: 'call', label: t('调用') },
+  { value: 'recharge', label: t('充值') },
+  { value: 'withdraw', label: t('提现') },
+])
 
 const filtered = computed(() => (type.value === 'all' ? wallet.billing : wallet.billing.filter((b) => b.type === type.value)))
 
@@ -32,27 +33,27 @@ const sums = computed(() => {
   return { income: Math.round(income * 100) / 100, expense: Math.round(expense * 100) / 100 }
 })
 
-const TYPE_LABEL: Record<BillingType, string> = { call: '调用', recharge: '充值', withdraw: '提现' }
+const typeLabel = (tp: BillingType) => t(tp === 'call' ? '调用' : tp === 'recharge' ? '充值' : '提现')
 </script>
 
 <template>
   <div class="page">
     <div class="page-head">
       <div>
-        <h1 class="page-title">账单流水</h1>
-        <p class="page-sub">所有充值与消费明细，支持按类型筛选</p>
+        <h1 class="page-title">{{ t('账单流水') }}</h1>
+        <p class="page-sub">{{ t('所有充值与消费明细，支持按类型筛选') }}</p>
       </div>
     </div>
 
     <div class="sum-grid">
-      <div class="sum-card"><span>累计充值</span><b class="num num-up">{{ money(sums.income) }}</b></div>
-      <div class="sum-card"><span>累计消费</span><b class="num num-down">{{ money(sums.expense) }}</b></div>
-      <div class="sum-card"><span>本月消费</span><b class="num num-down">{{ money(wallet.wallet.monthCost) }}</b></div>
+      <div class="sum-card"><span>{{ t('累计充值') }}</span><b class="num num-up">{{ money(sums.income) }}</b></div>
+      <div class="sum-card"><span>{{ t('累计消费') }}</span><b class="num num-down">{{ money(sums.expense) }}</b></div>
+      <div class="sum-card"><span>{{ t('本月消费') }}</span><b class="num num-down">{{ money(wallet.wallet.monthCost) }}</b></div>
     </div>
 
     <AppCard pad="none" class="list-card">
       <template #head>
-        <div class="card-title"><AppIcon name="list" :size="16" class="ico" /><span>明细</span></div>
+        <div class="card-title"><AppIcon name="list" :size="16" class="ico" /><span>{{ t('明细') }}</span></div>
         <AppSegmented :model-value="type" :options="TYPES" @update:model-value="(v: string) => (type = v as any)" />
       </template>
 
@@ -62,13 +63,13 @@ const TYPE_LABEL: Record<BillingType, string> = { call: '调用', recharge: '充
             <AppIcon :name="b.type === 'call' ? 'zap' : b.type === 'recharge' ? 'coins' : 'arrow-up-right'" :size="15" />
           </span>
           <div class="list-row__main">
-            <div class="list-row__title">{{ TYPE_LABEL[b.type] }} · {{ b.agent }}</div>
-            <div class="list-row__sub">{{ timeAgo(b.time) }} · {{ b.method }} · <AppTag :variant="b.status === 'done' ? 'success' : 'warn'" class="st-tag">{{ b.status === 'done' ? '成功' : '处理中' }}</AppTag></div>
+            <div class="list-row__title">{{ typeLabel(b.type) }} · {{ b.agent }}</div>
+            <div class="list-row__sub">{{ timeAgo(b.time) }} · {{ b.method }} · <AppTag :variant="b.status === 'done' ? 'success' : 'warn'" class="st-tag">{{ b.status === 'done' ? t('成功') : t('处理中') }}</AppTag></div>
           </div>
           <span class="num" :class="b.amount > 0 ? 'num-up' : 'num-down'">{{ b.amount > 0 ? '+' : '' }}{{ money(b.amount) }}</span>
         </div>
       </div>
-      <EmptyState v-else icon="list" title="暂无该类型流水" desc="换个筛选条件试试。" />
+      <EmptyState v-else icon="list" :title="t('暂无该类型流水')" :desc="t('换个筛选条件试试。')" />
     </AppCard>
   </div>
 </template>

@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useUiStore } from '@/stores/ui'
+import { t } from '@/i18n'
 import AppIcon from '@/components/icons/AppIcon.vue'
 import AppButton from '@/components/base/AppButton.vue'
 import AppInput from '@/components/base/AppInput.vue'
@@ -27,7 +28,7 @@ const FEATURES = [
 ]
 
 function afterLogin(name: string) {
-  ui.toast({ type: 'success', title: '登录成功', desc: '欢迎回来，' + name })
+  ui.toast({ type: 'success', title: t('登录成功'), desc: t('欢迎回来，{name}', { name }) })
   const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/'
   router.push(redirect)
 }
@@ -39,11 +40,11 @@ async function submitGoogleLike() {
 
 async function submitEmail() {
   if (!email.value.trim() || !password.value) {
-    emailErr.value = '请输入邮箱和密码'
+    emailErr.value = t('请输入邮箱和密码')
     return
   }
   if (!/^\S+@\S+\.\S+$/.test(email.value.trim())) {
-    emailErr.value = '邮箱格式不正确'
+    emailErr.value = t('邮箱格式不正确')
     return
   }
   await auth.login('email', { name: '陈默', email: email.value.trim(), color: '#1a73e8' })
@@ -51,7 +52,7 @@ async function submitEmail() {
 }
 
 function demoSoon() {
-  ui.toast({ type: 'info', title: '演示环境', desc: '该链接为演示占位，不跳转外部页面' })
+  ui.toast({ type: 'info', title: t('演示环境'), desc: t('该链接为演示占位，不跳转外部页面') })
 }
 </script>
 
@@ -60,53 +61,53 @@ function demoSoon() {
     <section class="auth__brand">
       <div class="brand-inner">
         <div class="brand-logo"><span>R</span><span class="brand-logo__name">Re<em>solve</em></span></div>
-        <h1 class="brand-title">让每一个终端成为可调用的 AI 节点</h1>
-        <p class="brand-sub">接入本地 Agent 与模型，按 token 按次付费，企业内网数据不出局域网。</p>
+        <h1 class="brand-title">{{ t('让每一个终端成为可调用的 AI 节点') }}</h1>
+        <p class="brand-sub">{{ t('接入本地 Agent 与模型，按 token 按次付费，企业内网数据不出局域网。') }}</p>
         <ul class="brand-feats">
           <li v-for="f in FEATURES" :key="f">
             <AppIcon name="check-circle" :size="17" />
-            <span>{{ f }}</span>
+            <span>{{ t(f) }}</span>
           </li>
         </ul>
-        <div class="brand-foot">Resolve · AI Agent 协作平台</div>
+        <div class="brand-foot">{{ t('Resolve · AI Agent 协作平台') }}</div>
       </div>
     </section>
 
     <section class="auth__panel">
       <div class="panel-inner">
-        <h2 class="panel-title">欢迎回来</h2>
-        <p class="panel-sub">登录 Resolve 控制台，管理你的 Agent 与节点</p>
+        <h2 class="panel-title">{{ t('欢迎回来') }}</h2>
+        <p class="panel-sub">{{ t('登录 Resolve 控制台，管理你的 Agent 与节点') }}</p>
 
         <AppButton variant="dark" size="block" brand-icon="github" class="btn-github" @click="oauthOpen = true">
-          使用 GitHub 登录
+          {{ t('使用 GitHub 登录') }}
         </AppButton>
 
-        <div class="auth-divider"><span>或使用邮箱</span></div>
+        <div class="auth-divider"><span>{{ t('或使用邮箱') }}</span></div>
 
         <form class="panel-form" @submit.prevent="submitEmail">
           <AppField label="邮箱" :error="emailErr">
-            <AppInput v-model="email" type="email" placeholder="name@example.com" autocomplete="email" />
+            <AppInput v-model="email" type="email" :placeholder="t('邮箱地址')" autocomplete="email" />
           </AppField>
-          <AppField label="密码">
+          <AppField :label="t('密码')">
             <AppInput v-model="password" type="password" placeholder="••••••••" autocomplete="current-password" />
           </AppField>
-          <AppButton type="submit" variant="primary" size="block" class="btn-submit">登录</AppButton>
+          <AppButton type="submit" variant="primary" size="block" class="btn-submit">{{ t('登录') }}</AppButton>
         </form>
 
         <p class="panel-switch">
-          还没有账号？
-          <RouterLink to="/register" class="panel-link">立即注册</RouterLink>
+          {{ t('还没有账号？') }}
+          <RouterLink to="/register" class="panel-link">{{ t('立即注册') }}</RouterLink>
         </p>
         <p class="panel-terms">
-          登录即表示同意
-          <a href="javascript:void(0)" class="panel-link" @click="demoSoon">服务条款</a>
-          与
-          <a href="javascript:void(0)" class="panel-link" @click="demoSoon">隐私政策</a>
+          {{ t('登录即表示同意') }}
+          <a href="javascript:void(0)" class="panel-link" @click="demoSoon">{{ t('服务条款') }}</a>
+          {{ t('与') }}
+          <a href="javascript:void(0)" class="panel-link" @click="demoSoon">{{ t('隐私政策') }}</a>
         </p>
       </div>
     </section>
 
-    <AppModal v-model="oauthOpen" title="Authorize Resolve" subtitle="授权 GitHub 账号登录 Resolve 控制台" :width="460" :sheet="false">
+    <AppModal v-model="oauthOpen" :title="t('授权登录 Resolve')" :subtitle="t('授权 GitHub 账号登录 Resolve 控制台')" :width="460" :sheet="false">
       <div class="oauth">
         <div class="oauth__url"><AppIcon name="lock" :size="13" /><span>github.com/login/oauth/authorize?client_id=resolve-demo</span></div>
         <div class="oauth__who">
@@ -116,17 +117,17 @@ function demoSoon() {
             <div class="oauth__desc">GitHub 账号 · chenmo-dev</div>
           </div>
         </div>
-        <div class="oauth__hint">Resolve 将代表你执行以下操作：</div>
+        <div class="oauth__hint">{{ t('Resolve 将代表你执行以下操作：') }}</div>
         <ul class="oauth__perms">
-          <li><AppIcon name="check" :size="14" /><span>read:user 读取公开资料</span></li>
-          <li><AppIcon name="check" :size="14" /><span>public_repo 读取公开仓库</span></li>
-          <li><AppIcon name="check" :size="14" /><span>user:email 读取邮箱</span></li>
+          <li><AppIcon name="check" :size="14" /><span>read:user {{ t('读取公开资料') }}</span></li>
+          <li><AppIcon name="check" :size="14" /><span>public_repo {{ t('读取公开仓库') }}</span></li>
+          <li><AppIcon name="check" :size="14" /><span>user:email {{ t('读取邮箱') }}</span></li>
         </ul>
-        <p class="oauth__note">这是演示流程，不会真实跳转 GitHub</p>
+        <p class="oauth__note">{{ t('这是演示流程，不会真实跳转 GitHub') }}</p>
       </div>
       <template #footer>
-        <AppButton variant="ghost" @click="oauthOpen = false">取消</AppButton>
-        <AppButton variant="primary" :loading="oauthLoading" @click="submitGoogleLike">授权并登录</AppButton>
+        <AppButton variant="ghost" @click="oauthOpen = false">{{ t('取消') }}</AppButton>
+        <AppButton variant="primary" :loading="oauthLoading" @click="submitGoogleLike">{{ t('授权并登录') }}</AppButton>
       </template>
     </AppModal>
   </div>

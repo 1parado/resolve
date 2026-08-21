@@ -13,6 +13,7 @@ import AppSwitch from '@/components/base/AppSwitch.vue'
 import AppTag from '@/components/base/AppTag.vue'
 import ProgressBar from '@/components/base/ProgressBar.vue'
 import StatusDot from '@/components/base/StatusDot.vue'
+import { t } from '@/i18n'
 import { identicon, money } from '@/utils/format'
 import type { MemberRole } from '@/types'
 
@@ -32,7 +33,7 @@ async function saveBasic() {
   saving.value = true
   try {
     await ent.updateBasic({ name: name.value.trim() || ent.ent.name, seats: Math.max(1, Number(seats.value) || 1) })
-    ui.toast({ type: 'success', title: '已保存', desc: '企业信息已更新' })
+    ui.toast({ type: 'success', title: t('已保存'), desc: t('企业信息已更新') })
   } finally {
     saving.value = false
   }
@@ -41,18 +42,18 @@ async function saveBasic() {
 function saveBudget() {
   const b = Number(budget.value)
   if (b > 0) {
-    ui.toast({ type: 'success', title: '已保存', desc: '月度预算上限设置为 ' + money(b) })
+    ui.toast({ type: 'success', title: t('已保存'), desc: t('月度预算上限设置为 {n}', { n: money(b) }) })
   }
 }
 
 async function setRole(m: { id: string; role: MemberRole }, role: MemberRole) {
   await ent.setMemberRole(m.id, role)
-  ui.toast({ type: 'success', title: '已更新', desc: (role === '管理员' ? '已将' : '已将') + m.role + ' 调整为 ' + role })
+  ui.toast({ type: 'success', title: t('已更新'), desc: t('已将 {a} 调整为 {b}', { a: m.role, b: role }) })
 }
 
 async function kick(m: { id: string; name: string }) {
   await ent.removeMember(m.id)
-  ui.toast({ type: 'info', title: '已移除成员', desc: m.name + ' 不再属于 ' + ent.ent.name })
+  ui.toast({ type: 'info', title: t('已移除成员'), desc: t('{n} 不再属于 {c}', { n: m.name, c: ent.ent.name }) })
 }
 </script>
 
@@ -62,52 +63,52 @@ async function kick(m: { id: string; name: string }) {
       <div>
         <button class="back" @click="router.push('/enterprise')">
           <AppIcon name="chev-left" :size="15" />
-          <span>返回企业版</span>
+          <span>{{ t('返回企业版') }}</span>
         </button>
-        <h1 class="page-title">企业管理</h1>
-        <p class="page-sub">维护企业信息、成员权限与消费预算</p>
+        <h1 class="page-title">{{ t('企业管理') }}</h1>
+        <p class="page-sub">{{ t('维护企业信息、成员权限与消费预算') }}</p>
       </div>
     </div>
 
     <div class="grid grid-2 main-grid">
       <AppCard pad="lg">
         <template #head>
-          <div class="card-title"><AppIcon name="building" :size="16" class="ico" /><span>基本信息</span></div>
+          <div class="card-title"><AppIcon name="building" :size="16" class="ico" /><span>{{ t('基本信息') }}</span></div>
         </template>
         <div class="form-grid form-grid-1 form-stack">
-          <AppField label="企业名称">
-            <AppInput v-model="name" placeholder="企业名称" />
+          <AppField :label="t('企业名称')">
+            <AppInput v-model="name" :placeholder="t('企业名称')" />
           </AppField>
-          <AppField label="席位数量" hint="成员达到上限后需扩容">
+          <AppField :label="t('席位数量')" :hint="t('成员达到上限后需扩容')">
             <AppInput v-model="seats" type="number" min="1" />
           </AppField>
         </div>
         <div class="foot">
-          <AppButton variant="primary" :loading="saving" @click="saveBasic">保存</AppButton>
+          <AppButton variant="primary" :loading="saving" @click="saveBasic">{{ t('保存') }}</AppButton>
         </div>
       </AppCard>
 
       <AppCard pad="lg">
         <template #head>
-          <div class="card-title"><AppIcon name="coins" :size="16" class="ico" /><span>消费预算</span></div>
+          <div class="card-title"><AppIcon name="coins" :size="16" class="ico" /><span>{{ t('消费预算') }}</span></div>
         </template>
         <div class="budget">
-          <div class="budget__row"><span>本月已用</span><b class="num">{{ money(ent.ent.usage.monthFee) }}</b></div>
-          <div class="budget__row"><span>预算上限</span><b class="num">{{ money(BUDGET) }}</b></div>
+          <div class="budget__row"><span>{{ t('本月已用') }}</span><b class="num">{{ money(ent.ent.usage.monthFee) }}</b></div>
+          <div class="budget__row"><span>{{ t('预算上限') }}</span><b class="num">{{ money(BUDGET) }}</b></div>
           <ProgressBar :value="budgetPct" :height="8" class="budget__bar" />
-          <div class="budget__hint">已使用 <b class="num">{{ budgetPct }}%</b>，到达 80% 将提醒管理员</div>
-          <AppField label="调整上限">
+          <div class="budget__hint">{{ t('已使用 {p}%，到达 80% 将提醒管理员', { p: budgetPct }) }}</div>
+          <AppField :label="t('调整上限')">
             <AppInput v-model="budget" type="number" min="100" />
           </AppField>
-          <AppButton variant="primary" icon="check" @click="saveBudget">保存上限</AppButton>
+          <AppButton variant="primary" icon="check" @click="saveBudget">{{ t('保存上限') }}</AppButton>
         </div>
       </AppCard>
     </div>
 
     <AppCard pad="none" class="mem-card">
       <template #head>
-        <div class="card-title"><AppIcon name="users" :size="16" class="ico" /><span>成员管理</span></div>
-        <span class="card-sub">{{ ent.ent.members.length }} 人 · 管理员可调整角色与移除成员</span>
+        <div class="card-title"><AppIcon name="users" :size="16" class="ico" /><span>{{ t('成员管理') }}</span></div>
+        <span class="card-sub">{{ t('{n} 人 · 管理员可调整角色与移除成员', { n: ent.ent.members.length }) }}</span>
       </template>
       <div class="members">
         <div v-for="m in ent.ent.members" :key="m.id" class="mem">
@@ -115,7 +116,7 @@ async function kick(m: { id: string; name: string }) {
           <div class="mem__main">
             <div class="mem__name">
               {{ m.name }}
-              <AppTag v-if="m.role === '管理员'" variant="brand" class="mem__role">管理员</AppTag>
+              <AppTag v-if="m.role === '管理员'" variant="brand" class="mem__role">{{ t('管理员') }}</AppTag>
             </div>
             <div class="mem__meta">{{ m.job }} · {{ m.os.label }}</div>
           </div>
@@ -127,9 +128,9 @@ async function kick(m: { id: string; name: string }) {
               :class="{ ghost: m.role === '管理员' }"
               @click="setRole(m, m.role === '管理员' ? '成员' : '管理员')"
             >
-              {{ m.role === '管理员' ? '设为成员' : '设为管理员' }}
+              {{ m.role === '管理员' ? t('设为成员') : t('设为管理员') }}
             </button>
-            <button v-if="m.role !== '管理员'" type="button" class="op danger" @click="kick(m)">移除</button>
+            <button v-if="m.role !== '管理员'" type="button" class="op danger" @click="kick(m)">{{ t('移除') }}</button>
           </div>
         </div>
       </div>

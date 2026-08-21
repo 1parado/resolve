@@ -14,6 +14,7 @@ import StatusDot from '@/components/base/StatusDot.vue'
 import OsBadge from '@/components/base/OsBadge.vue'
 import EmptyState from '@/components/base/EmptyState.vue'
 import ContributionHeatmap from '@/components/profile/ContributionHeatmap.vue'
+import { t } from '@/i18n'
 import { esc, fmtNum, hexA, identicon, money, timeAgo } from '@/utils/format'
 
 const router = useRouter()
@@ -34,9 +35,9 @@ const agentActive = () => profile.agents.find((a) => a.id === detail.value.id)
 async function copyLink() {
   try {
     await navigator.clipboard.writeText('https://resolve.local/u/chenmo-dev')
-    ui.toast({ type: 'success', title: '已复制分享链接' })
+    ui.toast({ type: 'success', title: t('已复制分享链接') })
   } catch {
-    ui.toast({ type: 'error', title: '复制失败', desc: '请手动复制链接' })
+    ui.toast({ type: 'error', title: t('复制失败'), desc: t('请手动复制链接') })
   }
 }
 
@@ -47,8 +48,8 @@ const nodeIsConnected = () => profile.node.connected
   <div class="page">
     <div class="page-head">
       <div>
-        <h1 class="page-title">个人主页</h1>
-        <p class="page-sub">你的公开身份与在线节点，其他用户可见、可调。成交量按天记录，最近 53 周可回溯。</p>
+        <h1 class="page-title">{{ t('个人主页') }}</h1>
+        <p class="page-sub">{{ t('你的公开身份与在线节点，其他用户可见、可调。成交量按天记录，最近 53 周可回溯。') }}</p>
       </div>
     </div>
 
@@ -59,7 +60,7 @@ const nodeIsConnected = () => profile.node.connected
         <div class="hero__info">
           <div class="hero__name-row">
             <h2 class="hero__name">{{ profile.profile.name }}</h2>
-            <AppTag variant="brand" dot>认证服务商</AppTag>
+            <AppTag variant="brand" dot>{{ t('认证服务商') }}</AppTag>
           </div>
           <div class="hero__job">{{ profile.profile.job }}</div>
           <div class="hero__meta">
@@ -68,30 +69,30 @@ const nodeIsConnected = () => profile.node.connected
               <AppIcon name="github" brand :size="15" />
               <span>github.com/{{ esc(profile.profile.github) }}</span>
             </a>
-            <span class="hero__joined"><AppIcon name="calendar" :size="14" />加入于 {{ profile.profile.joined }}</span>
+            <span class="hero__joined"><AppIcon name="calendar" :size="14" />{{ t('加入于 {d}', { d: profile.profile.joined }) }}</span>
           </div>
           <p class="hero__bio">{{ profile.profile.bio }}</p>
         </div>
         <div class="hero__actions">
-          <AppButton icon="edit" @click="router.push('/profile/edit')">编辑资料</AppButton>
-          <AppButton variant="primary" icon="plug" @click="router.push('/connect')">接入 Agent</AppButton>
+          <AppButton icon="edit" @click="router.push('/profile/edit')">{{ t('编辑资料') }}</AppButton>
+          <AppButton variant="primary" icon="plug" @click="router.push('/connect')">{{ t('接入 Agent') }}</AppButton>
         </div>
       </div>
     </AppCard>
 
     <!-- 指标 -->
     <div class="grid grid-4 stats">
-      <StatCard icon="zap" label="今日成交量" :value="profile.stat.today + ' 单'" hint="实时" accent />
-      <StatCard icon="trending-up" label="本周成交量" :value="profile.stat.week + ' 单'" />
-      <StatCard icon="check-circle" label="累计成交量" :value="fmtNum(profile.stat.total) + ' 单'" />
-      <StatCard icon="coins" label="本月收入" :value="money(profile.stat.revenue)" accent />
+      <StatCard icon="zap" :label="t('今日成交量')" :value="profile.stat.today + t('单')" :hint="t('实时')" accent />
+      <StatCard icon="trending-up" :label="t('本周成交量')" :value="profile.stat.week + t('单')" />
+      <StatCard icon="check-circle" :label="t('累计成交量')" :value="fmtNum(profile.stat.total) + t('单')" />
+      <StatCard icon="coins" :label="t('本月收入')" :value="money(profile.stat.revenue)" accent />
     </div>
 
     <!-- 热力图 -->
     <AppCard pad="none" class="hm-card">
       <template #head>
-        <div class="card-title"><AppIcon name="grid" :size="16" class="ico" /><span>成交量热力图</span></div>
-        <AppTag variant="brand">累计 {{ fmtNum(profile.stat.total) }} 单</AppTag>
+        <div class="card-title"><AppIcon name="grid" :size="16" class="ico" /><span>{{ t('成交量热力图') }}</span></div>
+        <AppTag variant="brand">{{ t('累计 {n} 单', { n: fmtNum(profile.stat.total) }) }}</AppTag>
       </template>
       <div class="hm-body">
         <ContributionHeatmap :data="profile.heatmap" />
@@ -102,8 +103,8 @@ const nodeIsConnected = () => profile.node.connected
     <div class="grid grid-main-side main-grid">
       <AppCard pad="none">
         <template #head>
-          <div class="card-title"><AppIcon name="cpu" :size="16" class="ico" /><span>我的 Agents</span></div>
-          <span class="card-sub">点击查看详情</span>
+          <div class="card-title"><AppIcon name="cpu" :size="16" class="ico" /><span>{{ t('我的 Agents') }}</span></div>
+          <span class="card-sub">{{ t('点击查看详情') }}</span>
         </template>
         <div class="agents">
           <button v-for="a in profile.agents" :key="a.id" type="button" class="tile" @click="openDetail(a.id)">
@@ -125,18 +126,18 @@ const nodeIsConnected = () => profile.node.connected
       <div class="stack stack-16">
         <AppCard pad="none">
           <template #head>
-            <div class="card-title"><AppIcon name="server" :size="16" class="ico" /><span>在线节点</span></div>
+            <div class="card-title"><AppIcon name="server" :size="16" class="ico" /><span>{{ t('在线节点') }}</span></div>
           </template>
           <div v-if="nodeIsConnected()" class="node">
             <div class="node__head">
               <span class="node__name">{{ profile.node.name }}</span>
-              <StatusDot status="online" label="在线" />
+              <StatusDot status="online" :label="t('在线')" />
             </div>
             <div class="node__ip mono">{{ profile.node.ip }}:{{ profile.node.port }}</div>
             <div class="node__tags">
               <AppTag icon="layers">{{ profile.node.runtime }}</AppTag>
               <AppTag :variant="profile.node.visibility === 'public' ? 'brand' : 'warn'" :icon="profile.node.visibility === 'public' ? 'globe' : 'lock'">
-                {{ profile.node.visibility === 'public' ? '全网公开' : '仅企业内网' }}
+                {{ profile.node.visibility === 'public' ? t('全网公开') : t('仅企业内网') }}
               </AppTag>
             </div>
             <div class="node__agents">
@@ -146,17 +147,17 @@ const nodeIsConnected = () => profile.node.connected
           <EmptyState
             v-else
             icon="plug"
-            title="尚未接入节点"
-            desc="扫描本地或云端 Agent，可视化配置 IP、端口与模型后一键发布到个人主页。"
-            action-text="立即接入"
+            :title="t('尚未接入节点')"
+            :desc="t('扫描本地或云端 Agent，可视化配置 IP、端口与模型后一键发布到个人主页。')"
+            :action-text="t('立即接入')"
             @action="router.push('/connect')"
           />
         </AppCard>
 
         <AppCard pad="none">
           <template #head>
-            <div class="card-title"><AppIcon name="trending-up" :size="16" class="ico" /><span>最近成交</span></div>
-            <a class="card-link" @click="router.push('/wallet')">全部流水</a>
+            <div class="card-title"><AppIcon name="trending-up" :size="16" class="ico" /><span>{{ t('最近成交') }}</span></div>
+            <a class="card-link" @click="router.push('/wallet')">{{ t('全部流水') }}</a>
           </template>
           <div class="txs">
             <div v-for="b in profile.recentBilling(5)" :key="b.id" class="list-row tx-row">
@@ -164,7 +165,7 @@ const nodeIsConnected = () => profile.node.connected
                 <AppIcon :name="b.type === 'call' ? 'zap' : b.type === 'recharge' ? 'coins' : 'arrow-up-right'" :size="15" />
               </span>
               <div class="list-row__main">
-                <div class="list-row__title">{{ b.type === 'call' ? '调用 · ' + b.agent : b.type === 'recharge' ? '充值 · ' + b.agent : '提现 · ' + b.agent }}</div>
+                <div class="list-row__title">{{ b.type === 'call' ? t('调用 · {a}', { a: b.agent }) : b.type === 'recharge' ? t('充值 · {a}', { a: b.agent }) : t('提现 · {a}', { a: b.agent }) }}</div>
                 <div class="list-row__sub">{{ timeAgo(b.time) }}</div>
               </div>
               <span class="num" :class="b.amount > 0 ? 'num-up' : 'num-down'">{{ b.amount > 0 ? '+' : '' }}{{ money(b.amount) }}</span>
@@ -186,7 +187,7 @@ const nodeIsConnected = () => profile.node.connected
             <AppTag v-for="t in agentActive()!.tags" :key="t">{{ t }}</AppTag>
           </div>
           <div class="detail__models">
-            <div class="detail__label">可用模型</div>
+            <div class="detail__label">{{ t('可用模型') }}</div>
             <div class="detail__chips">
               <AppTag v-for="m in agentActive()!.models" :key="m" variant="weak" class="mono-chip">{{ m }}</AppTag>
             </div>
@@ -195,8 +196,8 @@ const nodeIsConnected = () => profile.node.connected
         </div>
       </div>
       <template #footer>
-        <AppButton icon="copy" @click="copyLink">复制分享链接</AppButton>
-        <AppButton variant="ghost" @click="closeDetail">关闭</AppButton>
+        <AppButton icon="copy" @click="copyLink">{{ t('复制分享链接') }}</AppButton>
+        <AppButton variant="ghost" @click="closeDetail">{{ t('关闭') }}</AppButton>
       </template>
     </AppModal>
   </div>

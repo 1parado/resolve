@@ -9,22 +9,24 @@ import AppTag from '@/components/base/AppTag.vue'
 import AppAvatar from '@/components/base/AppAvatar.vue'
 import AppSwitch from '@/components/base/AppSwitch.vue'
 import StatusDot from '@/components/base/StatusDot.vue'
+import { computed } from 'vue'
+import { t } from '@/i18n'
 import { fmtNum, identicon, money, timeAgo } from '@/utils/format'
 
 const router = useRouter()
 const ent = useEnterpriseStore()
 const ui = useUiStore()
 
-const SETTING_META: { key: string; label: string; desc: string }[] = [
-  { key: 'allowMutualCall', label: '允许成员互相调用', desc: '成员可以在企业内调用彼此的 Agent' },
-  { key: 'allowGuestView', label: '允许访客查看', desc: '未登录访客可浏览成员公开主页' },
-  { key: 'enforceLocalOnly', label: '强制内网执行', desc: '企业 Agent 仅能在内网节点运行' },
-  { key: 'autoApprove', label: '调用审批制', desc: '新成员的调用需管理员审批' },
-]
+const SETTING_META = computed(() => [
+  { key: 'allowMutualCall', label: t('允许成员互相调用'), desc: t('成员可以在企业内调用彼此的 Agent') },
+  { key: 'allowGuestView', label: t('允许访客查看'), desc: t('未登录访客可浏览成员公开主页') },
+  { key: 'enforceLocalOnly', label: t('强制内网执行'), desc: t('企业 Agent 仅能在内网节点运行') },
+  { key: 'autoApprove', label: t('调用审批制'), desc: t('新成员的调用需管理员审批') },
+])
 
 function toggle(key: string, v: boolean) {
   ent.setSetting(key, v)
-  ui.toast({ type: 'success', title: '已更新', desc: '设置已保存并同步到全部成员' })
+  ui.toast({ type: 'success', title: t('已更新'), desc: t('设置已保存并同步到全部成员') })
 }
 </script>
 
@@ -32,11 +34,11 @@ function toggle(key: string, v: boolean) {
   <div class="page">
     <div class="page-head">
       <div>
-        <h1 class="page-title">企业版</h1>
-        <p class="page-sub">企业内网互相查看与调用 Agent，数据不出局域网</p>
+        <h1 class="page-title">{{ t('企业版') }}</h1>
+        <p class="page-sub">{{ t('企业内网互相查看与调用 Agent，数据不出局域网') }}</p>
       </div>
       <div class="head-actions">
-        <AppButton variant="primary" icon="settings" @click="router.push('/enterprise/admin')">企业管理</AppButton>
+        <AppButton variant="primary" icon="settings" @click="router.push('/enterprise/admin')">{{ t('企业管理') }}</AppButton>
       </div>
     </div>
 
@@ -46,29 +48,29 @@ function toggle(key: string, v: boolean) {
         <div class="ent__main">
           <div class="ent__name">{{ ent.ent.name }}</div>
           <div class="ent__meta">
-            <span>{{ ent.ent.seats }} 席成员</span>
+            <span>{{ t('{n} 席成员', { n: ent.ent.seats }) }}</span>
             <span class="ent__dot" />
-            <span>内网优先</span>
+            <span>{{ t('内网优先') }}</span>
             <span class="ent__dot" />
-            <span>按量计费</span>
+            <span>{{ t('按量计费') }}</span>
           </div>
         </div>
-        <AppTag variant="brand">企业版</AppTag>
+        <AppTag variant="brand">{{ t('企业版') }}</AppTag>
       </div>
     </AppCard>
 
     <div class="grid grid-4 stats">
-      <div class="e-stat"><span>本月调用</span><b class="num">{{ fmtNum(ent.ent.usage.monthCalls) }}</b><em>次</em></div>
-      <div class="e-stat"><span>本月 Token</span><b class="num">{{ ent.ent.usage.monthTokens }}</b><em></em></div>
-      <div class="e-stat"><span>本月费用</span><b class="num">{{ money(ent.ent.usage.monthFee) }}</b><em></em></div>
-      <div class="e-stat"><span>成员总数</span><b class="num">{{ ent.ent.members.length }}</b><em>人</em></div>
+      <div class="e-stat"><span>{{ t('本月调用') }}</span><b class="num">{{ fmtNum(ent.ent.usage.monthCalls) }}</b><em>{{ t('次') }}</em></div>
+      <div class="e-stat"><span>{{ t('本月 Token') }}</span><b class="num">{{ ent.ent.usage.monthTokens }}</b><em></em></div>
+      <div class="e-stat"><span>{{ t('本月费用') }}</span><b class="num">{{ money(ent.ent.usage.monthFee) }}</b><em></em></div>
+      <div class="e-stat"><span>{{ t('成员总数') }}</span><b class="num">{{ ent.ent.members.length }}</b><em>{{ t('人') }}</em></div>
     </div>
 
     <div class="grid grid-main-side main-grid">
       <AppCard pad="none">
         <template #head>
-          <div class="card-title"><AppIcon name="users" :size="16" class="ico" /><span>成员</span></div>
-          <AppButton variant="ghost" size="sm" icon="users" @click="ui.toast({ type: 'info', title: '邀请链接已复制', desc: '演示环境不会真实发送邀请' })">邀请成员</AppButton>
+          <div class="card-title"><AppIcon name="users" :size="16" class="ico" /><span>{{ t('成员') }}</span></div>
+          <AppButton variant="ghost" size="sm" icon="users" @click="ui.toast({ type: 'info', title: t('邀请链接已复制'), desc: t('演示环境不会真实发送邀请') })">{{ t('邀请成员') }}</AppButton>
         </template>
         <div class="members">
           <button
@@ -82,7 +84,7 @@ function toggle(key: string, v: boolean) {
             <span class="mem__main">
               <span class="mem__name">
                 {{ m.name }}
-                <AppTag v-if="m.role === '管理员'" variant="brand" class="mem__role">管理员</AppTag>
+                <AppTag v-if="m.role === '管理员'" variant="brand" class="mem__role">{{ t('管理员') }}</AppTag>
               </span>
               <span class="mem__meta">{{ m.job }} · {{ m.os.label }}</span>
             </span>
@@ -99,7 +101,7 @@ function toggle(key: string, v: boolean) {
       <div class="stack stack-16">
         <AppCard pad="none">
           <template #head>
-            <div class="card-title"><AppIcon name="shield" :size="16" class="ico" /><span>企业设置</span></div>
+            <div class="card-title"><AppIcon name="shield" :size="16" class="ico" /><span>{{ t('企业设置') }}</span></div>
           </template>
           <div class="setts">
             <div v-for="s in SETTING_META" :key="s.key" class="sett">
@@ -114,7 +116,7 @@ function toggle(key: string, v: boolean) {
 
         <AppCard pad="none">
           <template #head>
-            <div class="card-title"><AppIcon name="clock" :size="16" class="ico" /><span>团队动态</span></div>
+            <div class="card-title"><AppIcon name="clock" :size="16" class="ico" /><span>{{ t('团队动态') }}</span></div>
           </template>
           <div class="logs">
             <div v-for="(l, i) in ent.ent.logs.slice(0, 6)" :key="i" class="log">

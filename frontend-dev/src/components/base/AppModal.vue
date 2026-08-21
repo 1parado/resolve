@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { watch } from 'vue'
+import { t } from '@/i18n'
 import AppIcon from '@/components/icons/AppIcon.vue'
 
 const props = withDefaults(
@@ -51,7 +52,7 @@ defineExpose({ close })
                 <p v-if="subtitle" class="modal__subtitle">{{ subtitle }}</p>
               </div>
               <slot name="head" />
-              <button class="modal__close" aria-label="关闭" @click="close">
+              <button class="modal__close" :aria-label="t('关闭')" @click="close">
                 <AppIcon name="x" :size="16" />
               </button>
             </header>

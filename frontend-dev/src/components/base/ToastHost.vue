@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useUiStore } from '@/stores/ui'
+import { t } from '@/i18n'
 import AppIcon from '@/components/icons/AppIcon.vue'
 
 const ui = useUiStore()
@@ -15,17 +16,17 @@ const TYPE_ICON: Record<string, string> = {
 <template>
   <Teleport to="body">
     <TransitionGroup name="toast" tag="div" class="toast-host">
-      <div v-for="t in ui.toasts" :key="t.id" class="toast" :class="'is-' + t.type" role="status">
+      <div v-for="tk in ui.toasts" :key="tk.id" class="toast" :class="'is-' + tk.type" role="status">
         <span class="toast__bar" />
-        <AppIcon :name="TYPE_ICON[t.type] || 'info'" :size="17" class="toast__icon" />
+        <AppIcon :name="TYPE_ICON[tk.type] || 'info'" :size="17" class="toast__icon" />
         <div class="toast__body">
-          <div class="toast__title">{{ t.title }}</div>
-          <div v-if="t.desc" class="toast__desc">{{ t.desc }}</div>
+          <div class="toast__title">{{ tk.title }}</div>
+          <div v-if="tk.desc" class="toast__desc">{{ tk.desc }}</div>
         </div>
-        <button v-if="t.action" type="button" class="toast__action" @click="t.action?.onClick">
-          {{ t.action.label }}
+        <button v-if="tk.action" type="button" class="toast__action" @click="tk.action?.onClick">
+          {{ tk.action.label }}
         </button>
-        <button class="toast__close" aria-label="关闭" @click="ui.dismiss(t.id)">
+        <button class="toast__close" :aria-label="t('关闭')" @click="ui.dismiss(tk.id)">
           <AppIcon name="x" :size="13" />
         </button>
       </div>

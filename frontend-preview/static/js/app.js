@@ -26,10 +26,10 @@
     document.getElementById('bellBtn').innerHTML = I('bell', 18) + '<span class="dot-badge"></span>';
     var chipIco = document.querySelector('.chip-ico');
     if (chipIco) chipIco.innerHTML = I('coins', 15);
-    var navMap = { profile: 'user', marketplace: 'market', connect: 'plug', wallet: 'wallet', enterprise: 'building' };
+    var navMap = { profile: 'user', marketplace: 'market', connect: 'plug', wallet: 'wallet', enterprise: 'building', github: 'github' };
     document.querySelectorAll('.nav-item').forEach(function (a) {
       var t = a.querySelector('.nav-ico');
-      if (t) t.innerHTML = I(navMap[a.dataset.nav] || 'dot', 18);
+      if (t && navMap[a.dataset.nav] !== undefined) t.innerHTML = I(navMap[a.dataset.nav], 18);
     });
     document.querySelectorAll('.tab-item').forEach(function (a) {
       var t = a.querySelector('.tab-ico');

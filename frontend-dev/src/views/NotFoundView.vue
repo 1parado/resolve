@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { t } from '@/i18n'
 import EmptyState from '@/components/base/EmptyState.vue'
 
 const router = useRouter()
@@ -10,9 +11,9 @@ const router = useRouter()
     <div class="nf__code">404</div>
     <EmptyState
       icon="help-circle"
-      title="页面未找到"
-      desc="你访问的页面不存在或已被移动。"
-      action-text="返回概览"
+      :title="t('页面未找到')"
+      :desc="t('你访问的页面不存在或已被移动。')"
+      :action-text="t('返回概览')"
       @action="router.push('/')"
     />
   </div>

@@ -12,6 +12,7 @@ import AppField from '@/components/base/AppField.vue'
 import AppModal from '@/components/base/AppModal.vue'
 import AppSegmented from '@/components/base/AppSegmented.vue'
 import ProgressBar from '@/components/base/ProgressBar.vue'
+import { t } from '@/i18n'
 import { money, timeAgo } from '@/utils/format'
 
 const router = useRouter()
@@ -32,13 +33,13 @@ const amountNum = computed(() => Number(amount.value) || 0)
 
 async function doRecharge() {
   if (amountNum.value <= 0) {
-    ui.toast({ type: 'warn', title: '请输入充值金额' })
+    ui.toast({ type: 'warn', title: t('请输入充值金额') })
     return
   }
   busy.value = true
   try {
     await wallet.recharge(amountNum.value, method.value)
-    ui.toast({ type: 'success', title: '充值成功', desc: method.value + ' 到账 ' + money(amountNum.value) })
+    ui.toast({ type: 'success', title: t('充值成功'), desc: t('{m} 到账 {n}', { m: method.value, n: money(amountNum.value) }) })
     rechargeOpen.value = false
     amount.value = ''
   } finally {
@@ -48,17 +49,17 @@ async function doRecharge() {
 
 async function doWithdraw() {
   if (amountNum.value <= 0) {
-    ui.toast({ type: 'warn', title: '请输入提现金额' })
+    ui.toast({ type: 'warn', title: t('请输入提现金额') })
     return
   }
   if (amountNum.value > wallet.wallet.balance) {
-    ui.toast({ type: 'warn', title: '余额不足', desc: '可提现金额 ' + money(wallet.wallet.balance) })
+    ui.toast({ type: 'warn', title: t('余额不足'), desc: t('可提现金额 {n}', { n: money(wallet.wallet.balance) }) })
     return
   }
   busy.value = true
   try {
     await wallet.withdraw(amountNum.value)
-    ui.toast({ type: 'success', title: '提现成功', desc: '已转出 ' + money(amountNum.value) + ' 至银行卡' })
+    ui.toast({ type: 'success', title: t('提现成功'), desc: t('已转出 {n} 至银行卡', { n: money(amountNum.value) }) })
     withdrawOpen.value = false
     amount.value = ''
   } finally {
@@ -71,8 +72,8 @@ async function doWithdraw() {
   <div class="page">
     <div class="page-head">
       <div>
-        <h1 class="page-title">钱包</h1>
-        <p class="page-sub">余额实时结算，按 token 按次计费，可随时充值提现</p>
+        <h1 class="page-title">{{ t('钱包') }}</h1>
+        <p class="page-sub">{{ t('余额实时结算，按 token 按次计费，可随时充值提现') }}</p>
       </div>
     </div>
 
@@ -80,45 +81,45 @@ async function doWithdraw() {
       <div class="stack stack-16">
         <AppCard pad="lg" class="bal-card">
           <template #head>
-            <div class="card-title"><AppIcon name="wallet" :size="16" class="ico" /><span>可用余额</span></div>
-            <AppTag variant="brand">实名已认证</AppTag>
+            <div class="card-title"><AppIcon name="wallet" :size="16" class="ico" /><span>{{ t('可用余额') }}</span></div>
+            <AppTag variant="brand">{{ t('实名已认证') }}</AppTag>
           </template>
           <div class="bal">
             <div class="bal__amt num">{{ money(wallet.wallet.balance) }}</div>
             <div class="bal__row">
-              <span>本月已消费</span>
+              <span>{{ t('本月已消费') }}</span>
               <b class="num">{{ money(wallet.wallet.monthCost) }}</b>
             </div>
             <div class="bal__row">
-              <span>本月预算</span>
+              <span>{{ t('本月预算') }}</span>
               <b class="num">{{ money(MONTH_BUDGET) }}</b>
             </div>
             <ProgressBar :value="budgetPct" :height="8" class="bal__bar" />
-            <div class="bal__hint">已使用 <b class="num">{{ budgetPct }}%</b> 额度，超额部分将提醒</div>
+            <div class="bal__hint">{{ t('已使用 {p}% 额度，超额部分将提醒', { p: budgetPct }) }}</div>
           </div>
           <div class="bal__actions">
-            <AppButton variant="primary" icon="plus" @click="rechargeOpen = true">充值</AppButton>
-            <AppButton variant="ghost" icon="download" @click="withdrawOpen = true">提现</AppButton>
-            <AppButton variant="ghost" icon="list" @click="router.push('/wallet/billing')">全部账单</AppButton>
+            <AppButton variant="primary" icon="plus" @click="rechargeOpen = true">{{ t('充值') }}</AppButton>
+            <AppButton variant="ghost" icon="download" @click="withdrawOpen = true">{{ t('提现') }}</AppButton>
+            <AppButton variant="ghost" icon="list" @click="router.push('/wallet/billing')">{{ t('全部账单') }}</AppButton>
           </div>
         </AppCard>
 
         <AppCard>
           <template #head>
-            <div class="card-title"><AppIcon name="info" :size="16" class="ico" /><span>计费说明</span></div>
+            <div class="card-title"><AppIcon name="info" :size="16" class="ico" /><span>{{ t('计费说明') }}</span></div>
           </template>
           <ul class="fees">
-            <li>调用第三方 Agent 按商家定价与真实用量结算，从余额实时扣费</li>
-            <li>充值与提现均为演示流程，不会产生真实资金变动</li>
-            <li>首次充值的用户将获得 10 元体验金</li>
+            <li>{{ t('调用第三方 Agent 按商家定价与真实用量结算，从余额实时扣费') }}</li>
+            <li>{{ t('充值与提现均为演示流程，不会产生真实资金变动') }}</li>
+            <li>{{ t('首次充值的用户将获得 10 元体验金') }}</li>
           </ul>
         </AppCard>
       </div>
 
       <AppCard pad="none">
         <template #head>
-          <div class="card-title"><AppIcon name="trending-up" :size="16" class="ico" /><span>最近流水</span></div>
-          <AppButton variant="ghost" size="sm" @click="router.push('/wallet/billing')">全部</AppButton>
+          <div class="card-title"><AppIcon name="trending-up" :size="16" class="ico" /><span>{{ t('最近流水') }}</span></div>
+          <AppButton variant="ghost" size="sm" @click="router.push('/wallet/billing')">{{ t('全部') }}</AppButton>
         </template>
         <div class="txs">
           <div v-for="b in wallet.billing.slice(0, 8)" :key="b.id" class="list-row tx-row">
@@ -126,7 +127,7 @@ async function doWithdraw() {
               <AppIcon :name="b.type === 'call' ? 'zap' : b.type === 'recharge' ? 'coins' : 'arrow-up-right'" :size="15" />
             </span>
             <div class="list-row__main">
-              <div class="list-row__title">{{ b.type === 'call' ? '调用 · ' + b.agent : b.type === 'recharge' ? '充值 · ' + b.agent : '提现 · ' + b.agent }}</div>
+              <div class="list-row__title">{{ b.type === 'call' ? t('调用 · {a}', { a: b.agent }) : b.type === 'recharge' ? t('充值 · {a}', { a: b.agent }) : t('提现 · {a}', { a: b.agent }) }}</div>
               <div class="list-row__sub">{{ timeAgo(b.time) }} · {{ b.method }}</div>
             </div>
             <span class="num" :class="b.amount > 0 ? 'num-up' : 'num-down'">{{ b.amount > 0 ? '+' : '' }}{{ money(b.amount) }}</span>
@@ -136,52 +137,52 @@ async function doWithdraw() {
     </div>
 
     <!-- 充值 -->
-    <AppModal v-model="rechargeOpen" title="充值余额" subtitle="支持微信与支付宝，实时到账" :width="440">
+    <AppModal v-model="rechargeOpen" :title="t('充值余额')" :subtitle="t('支持微信与支付宝，实时到账')" :width="440">
       <div class="pay">
-        <AppField label="充值金额">
+        <AppField :label="t('充值金额')">
           <div class="presets">
             <button v-for="p in PRESETS" :key="p" type="button" class="preset" :class="{ on: amountNum === p }" @click="amount = String(p)">
               {{ money(p) }}
             </button>
             <button type="button" class="preset preset--custom" :class="{ on: !PRESETS.includes(amountNum) && amountNum > 0 }" @click="amount = ''">
-              自定义
+              {{ t('自定义') }}
             </button>
           </div>
         </AppField>
         <div class="pay__custom">
-          <AppInput v-model="amount" type="number" min="1" placeholder="输入充值金额" />
+          <AppInput v-model="amount" type="number" min="1" :placeholder="t('输入充值金额')" />
         </div>
-        <AppField label="支付方式">
+        <AppField :label="t('支付方式')">
           <AppSegmented
             :model-value="method"
             :options="[
-              { value: '微信', label: '微信支付', brandIcon: 'wechat' },
-              { value: '支付宝', label: '支付宝', brandIcon: 'alipay' },
+              { value: '微信', label: t('微信支付'), brandIcon: 'wechat' },
+              { value: '支付宝', label: t('支付宝'), brandIcon: 'alipay' },
             ]"
             @update:model-value="(v: string) => (method = v as '微信' | '支付宝')"
           />
         </AppField>
       </div>
       <template #footer>
-        <AppButton variant="ghost" @click="rechargeOpen = false">取消</AppButton>
-        <AppButton variant="primary" icon="plus" :loading="busy" @click="doRecharge">确认充值 {{ amountNum > 0 ? money(amountNum) : '' }}</AppButton>
+        <AppButton variant="ghost" @click="rechargeOpen = false">{{ t('取消') }}</AppButton>
+        <AppButton variant="primary" icon="plus" :loading="busy" @click="doRecharge">{{ t('确认充值') }} {{ amountNum > 0 ? money(amountNum) : '' }}</AppButton>
       </template>
     </AppModal>
 
     <!-- 提现 -->
-    <AppModal v-model="withdrawOpen" title="提现到银行卡" subtitle="可提现 ' + money(wallet.wallet.balance) + '，T+1 到账" :width="440">
+    <AppModal v-model="withdrawOpen" :title="t('提现到银行卡')" :subtitle="t('可提现 {n}，T+1 到账', { n: money(wallet.wallet.balance) })" :width="440">
       <div class="pay">
-        <AppField label="提现金额">
-          <AppInput v-model="amount" type="number" min="1" :placeholder="'最多可提 ' + money(wallet.wallet.balance)" />
+        <AppField :label="t('提现金额')">
+          <AppInput v-model="amount" type="number" min="1" :placeholder="t('最多可提 {n}', { n: money(wallet.wallet.balance) })" />
         </AppField>
         <div class="pay__note">
           <AppIcon name="lock" :size="14" />
-          <span>提现需要完成实名认证，且单笔不低于 1 元</span>
+          <span>{{ t('提现需要完成实名认证，且单笔不低于 1 元') }}</span>
         </div>
       </div>
       <template #footer>
-        <AppButton variant="ghost" @click="withdrawOpen = false">取消</AppButton>
-        <AppButton variant="primary" icon="download" :loading="busy" @click="doWithdraw">确认提现</AppButton>
+        <AppButton variant="ghost" @click="withdrawOpen = false">{{ t('取消') }}</AppButton>
+        <AppButton variant="primary" icon="download" :loading="busy" @click="doWithdraw">{{ t('确认提现') }}</AppButton>
       </template>
     </AppModal>
   </div>

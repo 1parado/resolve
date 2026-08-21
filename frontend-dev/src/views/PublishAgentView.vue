@@ -10,6 +10,7 @@ import AppIcon from '@/components/icons/AppIcon.vue'
 import AppInput from '@/components/base/AppInput.vue'
 import AppField from '@/components/base/AppField.vue'
 import AppSegmented from '@/components/base/AppSegmented.vue'
+import { t } from '@/i18n'
 import { marketApi } from '@/api'
 import type { MarketCat } from '@/types'
 
@@ -20,7 +21,7 @@ const ui = useUiStore()
 
 const agentId = ref(profile.agents[0]?.id || '')
 const agent = computed(() => profile.agents.find((a) => a.id === agentId.value))
-const name = ref((agent.value?.name || '') + ' 服务')
+const name = ref((agent.value?.name || '') + ' ' + t('服务'))
 const cat = ref<MarketCat>('code')
 const desc = ref('')
 const tags = ref('')
@@ -31,21 +32,21 @@ const online = ref(true)
 const submitting = ref(false)
 const err = ref('')
 
-const CATS: { value: MarketCat; label: string }[] = [
-  { value: 'code', label: '代码生成' },
-  { value: 'reason', label: '深度推理' },
-  { value: 'ops', label: '本地算力' },
-  { value: 'content', label: '内容创作' },
-  { value: 'data', label: '数据分析' },
-  { value: 'design', label: '设计视觉' },
-]
+const CATS = computed(() => [
+  { value: 'code' as MarketCat, label: t('代码生成') },
+  { value: 'reason' as MarketCat, label: t('深度推理') },
+  { value: 'ops' as MarketCat, label: t('本地算力') },
+  { value: 'content' as MarketCat, label: t('内容创作') },
+  { value: 'data' as MarketCat, label: t('数据分析') },
+  { value: 'design' as MarketCat, label: t('设计视觉') },
+])
 
 function pickAgent(id: string) {
   agentId.value = id
   const a = profile.agents.find((x) => x.id === id)
   if (a) {
     models.value = [...a.models]
-    if (name.value === '') name.value = a.name + ' 服务'
+    if (name.value === '') name.value = a.name + ' ' + t('服务')
   }
 }
 
@@ -60,15 +61,15 @@ const priceNum = computed(() => Number(priceInput.value) || 0)
 async function submit() {
   if (!agent.value) return
   if (!name.value.trim()) {
-    err.value = '请填写商品名称'
+    err.value = t('请填写商品名称')
     return
   }
   if (priceNum.value <= 0) {
-    err.value = '请填写正确的单价'
+    err.value = t('请填写正确的单价')
     return
   }
   if (models.value.length === 0) {
-    err.value = '请至少选择一个可用模型'
+    err.value = t('请至少选择一个可用模型')
     return
   }
   submitting.value = true
@@ -86,11 +87,11 @@ async function submit() {
       priceNum: priceNum.value,
       tags: tags.value.split(/[,，]/).map((s) => s.trim()).filter(Boolean),
       models: models.value,
-      desc: desc.value.trim() || '暂无简介',
-      sla: '平均响应 1min · 成功率 99%',
+      desc: desc.value.trim() || t('暂无简介'),
+      sla: t('平均响应 1min · 成功率 99%'),
     })
     market.addItem(item)
-    ui.toast({ type: 'success', title: '上架成功', desc: item.name + ' 已发布到 Agent 市场' })
+    ui.toast({ type: 'success', title: t('上架成功'), desc: t('{n} 已发布到 Agent 市场', { n: item.name }) })
     router.push('/market')
   } finally {
     submitting.value = false
@@ -102,50 +103,50 @@ async function submit() {
   <div class="page page-narrow">
     <div class="page-head">
       <div>
-        <h1 class="page-title">上架 Agent</h1>
-        <p class="page-sub">把已接入的 Agent 发布到市场，设置定价与说明</p>
+        <h1 class="page-title">{{ t('上架 Agent') }}</h1>
+        <p class="page-sub">{{ t('把已接入的 Agent 发布到市场，设置定价与说明') }}</p>
       </div>
     </div>
 
     <AppCard pad="lg">
       <div class="form-grid form-grid-2">
-        <AppField label="选择 Agent" required>
+        <AppField :label="t('选择 Agent')" required>
           <select class="select" :value="agentId" @change="pickAgent(($event.target as HTMLSelectElement).value)">
             <option v-for="a in profile.agents" :key="a.id" :value="a.id">{{ a.name }}</option>
           </select>
         </AppField>
-        <AppField label="商品名称" required>
-          <AppInput v-model="name" placeholder="商品名称" />
+        <AppField :label="t('商品名称')" required>
+          <AppInput v-model="name" :placeholder="t('商品名称')" />
         </AppField>
 
         <div class="form-span">
-          <AppField label="分类" required>
-            <AppSegmented :model-value="cat" :options="CATS.map((c) => ({ value: c.value, label: c.label }))" @update:model-value="(v: string) => (cat = v as MarketCat)" />
+          <AppField :label="t('分类')" required>
+            <AppSegmented :model-value="cat" :options="CATS" @update:model-value="(v: string) => (cat = v as MarketCat)" />
           </AppField>
         </div>
 
         <div class="form-span">
-          <AppField label="简介" hint="展示在市场卡片与服务详情中">
-            <textarea v-model="desc" class="textarea" rows="3" placeholder="一句话介绍这个 Agent 擅长什么" />
+          <AppField :label="t('简介')" :hint="t('展示在市场卡片与服务详情中')">
+            <textarea v-model="desc" class="textarea" rows="3" :placeholder="t('一句话介绍这个 Agent 擅长什么')" />
           </AppField>
         </div>
 
-        <AppField label="标签" hint="用逗号分隔，最多 4 个">
-          <AppInput v-model="tags" placeholder="例如：代码生成, 全栈, 审查" />
+        <AppField :label="t('标签')" :hint="t('用逗号分隔，最多 4 个')">
+          <AppInput v-model="tags" :placeholder="t('例如：代码生成, 全栈, 审查')" />
         </AppField>
-        <AppField label="单价" required>
+        <AppField :label="t('单价')" required>
           <div class="price-row">
             <AppInput v-model="priceInput" type="number" min="0" step="0.01" style="flex: 1" />
             <select v-model="unit" class="select select-sm">
-              <option value="千token">/千token</option>
-              <option value="小时">/小时</option>
-              <option value="次">/次</option>
+              <option value="千token">/{{ t('千token') }}</option>
+              <option value="小时">/h</option>
+              <option value="次">/{{ t('次单价') }}</option>
             </select>
           </div>
         </AppField>
 
         <div class="form-span">
-          <AppField label="可用模型" required hint="点击切换选择，将展示给调用方">
+          <AppField :label="t('可用模型')" required :hint="t('点击切换选择，将展示给调用方')">
             <div class="model-chips">
               <button
                 v-for="m in agent?.models || []"
@@ -163,12 +164,12 @@ async function submit() {
         </div>
 
         <div class="form-span">
-          <AppField label="可见性">
+          <AppField :label="t('可见性')">
             <AppSegmented
               :model-value="online ? 'on' : 'off'"
               :options="[
-                { value: 'on', label: '公开上架', icon: 'globe' },
-                { value: 'off', label: '仅自己可见', icon: 'lock' },
+                { value: 'on', label: t('公开上架'), icon: 'globe' },
+                { value: 'off', label: t('仅自己可见'), icon: 'lock' },
               ]"
               @update:model-value="(v: string) => (online = v === 'on')"
             />
@@ -179,9 +180,9 @@ async function submit() {
       <p v-if="err" class="err">{{ err }}</p>
 
       <div class="foot">
-        <AppButton variant="ghost" @click="router.push('/market')">取消</AppButton>
+        <AppButton variant="ghost" @click="router.push('/market')">{{ t('取消') }}</AppButton>
         <AppButton variant="primary" icon="upload" :loading="submitting" @click="submit">
-          发布到市场 · ¥{{ priceNum }}<span style="font-size: 0.85em; margin-left: 2px">{{ unitSuffix }}</span>
+          {{ t('发布到市场') }} · ¥{{ priceNum }}<span style="font-size: 0.85em; margin-left: 2px">{{ unitSuffix }}</span>
         </AppButton>
       </div>
     </AppCard>

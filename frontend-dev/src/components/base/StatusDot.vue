@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { t } from '@/i18n'
 
 const props = withDefaults(
   defineProps<{
@@ -9,7 +10,7 @@ const props = withDefaults(
   { label: '' },
 )
 
-const text = computed(() => props.label || (props.status === 'online' ? '在线' : props.status === 'busy' ? '忙碌' : '离线'))
+const text = computed(() => props.label || t(props.status === 'online' ? '在线' : props.status === 'busy' ? '忙碌' : '离线'))
 </script>
 
 <template>

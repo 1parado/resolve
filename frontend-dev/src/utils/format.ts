@@ -1,6 +1,9 @@
 /* ==========================================================================
    utils/format.ts — 格式化 / 颜色 / 头像工具（与 frontend-preview mock.js 对齐）
    ========================================================================== */
+import { locale } from '@/i18n'
+
+const isEn = (): boolean => locale.value === 'en'
 
 export function esc(s: unknown): string {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
@@ -27,7 +30,7 @@ export function fmtNum(n: number): string {
 
 export function fmtDate(ts: number, withTime?: boolean): string {
   const d = new Date(ts)
-  let s = d.getMonth() + 1 + '月' + d.getDate() + '日'
+  let s = isEn() ? d.getMonth() + 1 + '/' + d.getDate() : d.getMonth() + 1 + '月' + d.getDate() + '日'
   if (withTime) s += ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes())
   return s
 }
@@ -39,10 +42,10 @@ export function fmtTime(ts: number): string {
 
 export function timeAgo(ts: number): string {
   const diff = (Date.now() - ts) / 1000
-  if (diff < 60) return '刚刚'
-  if (diff < 3600) return Math.floor(diff / 60) + ' 分钟前'
-  if (diff < 86400) return Math.floor(diff / 3600) + ' 小时前'
-  if (diff < 86400 * 30) return Math.floor(diff / 86400) + ' 天前'
+  if (diff < 60) return isEn() ? 'just now' : '刚刚'
+  if (diff < 3600) return isEn() ? Math.floor(diff / 60) + ' min ago' : Math.floor(diff / 60) + ' 分钟前'
+  if (diff < 86400) return isEn() ? Math.floor(diff / 3600) + ' h ago' : Math.floor(diff / 3600) + ' 小时前'
+  if (diff < 86400 * 30) return isEn() ? Math.floor(diff / 86400) + ' d ago' : Math.floor(diff / 86400) + ' 天前'
   return fmtDate(ts)
 }
 

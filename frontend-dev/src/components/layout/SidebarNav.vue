@@ -3,14 +3,13 @@ import { useRouter } from 'vue-router'
 import { RouterLink, RouterView } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useUiStore } from '@/stores/ui'
-import { useWalletStore } from '@/stores/wallet'
 import AppIcon from '@/components/icons/AppIcon.vue'
 import AppAvatar from '@/components/base/AppAvatar.vue'
-import { identicon, money } from '@/utils/format'
+import { t } from '@/i18n'
+import { identicon } from '@/utils/format'
 
 const auth = useAuthStore()
 const ui = useUiStore()
-const wallet = useWalletStore()
 const router = useRouter()
 
 const NAV = [
@@ -24,7 +23,7 @@ const NAV = [
 
 function logout() {
   auth.logout()
-  ui.toast({ type: 'info', title: '已退出登录' })
+  ui.toast({ type: 'info', title: t('已退出登录') })
   router.push('/login')
 }
 </script>
@@ -36,34 +35,33 @@ function logout() {
       <span class="side__name">Re<em>solve</em></span>
     </RouterLink>
 
-    <nav class="side__nav" aria-label="主导航">
+    <nav class="side__nav" :aria-label="t('主导航')">
       <RouterLink v-for="n in NAV" :key="n.to" :to="n.to" class="side__item" :class="{ active: $route.path === n.to }">
         <span class="side__ico"><AppIcon :name="n.icon" :size="18" /></span>
-        <span>{{ n.label }}</span>
+        <span>{{ t(n.label) }}</span>
       </RouterLink>
+      <a class="side__item side__item--ext" href="https://github.com/1parado/resolve" target="_blank" rel="noopener">
+        <span class="side__ico"><AppIcon name="github" brand :size="18" /></span>
+        <span>{{ t('GitHub') }}</span>
+        <span class="side__ext"><AppIcon name="external" :size="12" /></span>
+      </a>
     </nav>
 
     <div class="side__foot">
-      <div class="side-balance">
-        <div class="side-balance__label">账户余额</div>
-        <div class="side-balance__amt num">{{ money(wallet.wallet.balance) }}</div>
-        <RouterLink to="/wallet" class="side-balance__btn">充值</RouterLink>
-      </div>
-
       <div class="side__user">
-        <AppAvatar :name="auth.user?.name || '匿名'" :src="identicon(auth.user?.github || auth.user?.name || '', 120)" :size="34" />
+        <AppAvatar :name="auth.user?.name || t('匿名')" :src="identicon(auth.user?.github || auth.user?.name || '', 120)" :size="34" />
         <div class="side__userinfo">
-          <div class="side__uname">{{ auth.user?.name }}</div>
-          <div class="side__umeta">{{ auth.user?.provider === 'github' ? 'GitHub 登录' : '邮箱登录' }}</div>
+          <div class="side__uname">{{ auth.user?.name || t('匿名') }}</div>
+          <div class="side__umeta">{{ auth.user?.provider === 'github' ? t('GitHub 登录') : t('邮箱登录') }}</div>
         </div>
-        <button class="side__exit" aria-label="退出登录" title="退出登录" @click="logout">
+        <button class="side__exit" :aria-label="t('退出登录')" :title="t('退出登录')" @click="logout">
           <AppIcon name="logout" :size="16" />
         </button>
       </div>
 
       <button class="side__collapse" type="button" @click="ui.toggleSidebar()">
         <AppIcon name="chev-left" :size="15" />
-        <span>收起侧边栏</span>
+        <span>{{ t('收起侧边栏') }}</span>
       </button>
     </div>
   </aside>
@@ -151,6 +149,8 @@ function logout() {
   justify-content: center;
   width: 22px;
 }
+.side__item--ext { color: var(--text-faint); }
+.side__ext { margin-left: 3px; opacity: 0.5; }
 
 .side__foot {
   display: flex;
@@ -158,35 +158,6 @@ function logout() {
   gap: 10px;
   margin-top: 12px;
 }
-.side-balance {
-  position: relative;
-  background: var(--surface-soft);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px 14px;
-}
-.side-balance__label {
-  font-size: 11px;
-  color: var(--text-faint);
-}
-.side-balance__amt {
-  margin-top: 3px;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-strong);
-}
-.side-balance__btn {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--brand);
-  padding: 4px 10px;
-  border-radius: 7px;
-  background: var(--brand-soft);
-}
-.side-balance__btn:hover { background: var(--brand-line); }
 
 .side__user {
   display: flex;

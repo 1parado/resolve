@@ -10,6 +10,7 @@ import AppCard from '@/components/base/AppCard.vue'
 import AppTag from '@/components/base/AppTag.vue'
 import StatCard from '@/components/base/StatCard.vue'
 import ContributionHeatmap from '@/components/profile/ContributionHeatmap.vue'
+import { t } from '@/i18n'
 import { fmtNum, hexA, identicon, money, timeAgo } from '@/utils/format'
 
 const router = useRouter()
@@ -22,26 +23,26 @@ const wallet = useWalletStore()
   <div class="page">
     <div class="page-head">
       <div>
-        <h1 class="page-title">概览</h1>
-        <p class="page-sub">今天也让闲置算力变成可调用的服务</p>
+        <h1 class="page-title">{{ t('概览') }}</h1>
+        <p class="page-sub">{{ t('今天也让闲置算力变成可调用的服务') }}</p>
       </div>
       <div class="head-actions">
-        <AppButton icon="plug" @click="router.push('/connect')">接入 Agent</AppButton>
-        <AppButton variant="primary" icon="market" @click="router.push('/market')">去市场逛逛</AppButton>
+        <AppButton icon="plug" @click="router.push('/connect')">{{ t('接入 Agent') }}</AppButton>
+        <AppButton variant="primary" icon="market" @click="router.push('/market')">{{ t('去市场逛逛') }}</AppButton>
       </div>
     </div>
 
     <div class="grid grid-4">
-      <StatCard icon="zap" label="今日成交量" :value="profile.stat.today + ' 单'" hint="实时" accent />
-      <StatCard icon="trending-up" label="本周成交量" :value="profile.stat.week + ' 单'" />
-      <StatCard icon="check-circle" label="累计成交量" :value="fmtNum(profile.stat.total) + ' 单'" />
-      <StatCard icon="coins" label="本月收入" :value="money(profile.stat.revenue)" accent />
+      <StatCard icon="zap" :label="t('今日成交量')" :value="profile.stat.today + t('单')" :hint="t('实时')" accent />
+      <StatCard icon="trending-up" :label="t('本周成交量')" :value="profile.stat.week + t('单')" />
+      <StatCard icon="check-circle" :label="t('累计成交量')" :value="fmtNum(profile.stat.total) + t('单')" />
+      <StatCard icon="coins" :label="t('本月收入')" :value="money(profile.stat.revenue)" accent />
     </div>
 
     <AppCard pad="none" class="hm-card">
       <template #head>
-        <div class="card-title"><AppIcon name="grid" :size="16" class="ico" /><span>成交量热力图</span></div>
-        <AppTag variant="brand">累计 {{ fmtNum(profile.stat.total) }} 单</AppTag>
+        <div class="card-title"><AppIcon name="grid" :size="16" class="ico" /><span>{{ t('成交量热力图') }}</span></div>
+        <AppTag variant="brand">{{ t('累计 {n} 单', { n: fmtNum(profile.stat.total) }) }}</AppTag>
       </template>
       <div class="hm-body">
         <ContributionHeatmap :data="profile.heatmap" />
@@ -51,8 +52,8 @@ const wallet = useWalletStore()
     <div class="grid grid-main-side">
       <AppCard pad="none" class="agents-card">
         <template #head>
-          <div class="card-title"><AppIcon name="cpu" :size="16" class="ico" /><span>我的 Agents</span></div>
-          <AppButton variant="ghost" size="sm" @click="router.push('/u/chenmo-dev')">查看全部</AppButton>
+          <div class="card-title"><AppIcon name="cpu" :size="16" class="ico" /><span>{{ t('我的 Agents') }}</span></div>
+          <AppButton variant="ghost" size="sm" @click="router.push('/u/chenmo-dev')">{{ t('查看全部') }}</AppButton>
         </template>
         <div class="agents">
           <button
@@ -80,25 +81,25 @@ const wallet = useWalletStore()
       <div class="stack stack-16">
         <AppCard pad="none">
           <template #head>
-            <div class="card-title"><AppIcon name="wallet" :size="16" class="ico" /><span>钱包概览</span></div>
-            <AppButton variant="primary" size="sm" @click="router.push('/wallet')">去充值</AppButton>
+            <div class="card-title"><AppIcon name="wallet" :size="16" class="ico" /><span>{{ t('钱包概览') }}</span></div>
+            <AppButton variant="primary" size="sm" @click="router.push('/wallet')">{{ t('去充值') }}</AppButton>
           </template>
           <div class="wal-mini">
             <div class="wal-mini__amt num">{{ money(wallet.wallet.balance) }}</div>
-            <div class="wal-mini__meta">本月已消费 <span class="num">{{ money(wallet.wallet.monthCost) }}</span></div>
+            <div class="wal-mini__meta">{{ t('本月已消费') }} <span class="num">{{ money(wallet.wallet.monthCost) }}</span></div>
           </div>
         </AppCard>
 
         <AppCard pad="none">
           <template #head>
-            <div class="card-title"><AppIcon name="trending-up" :size="16" class="ico" /><span>最近成交</span></div>
-            <AppButton variant="ghost" size="sm" @click="router.push('/wallet')">全部</AppButton>
+            <div class="card-title"><AppIcon name="trending-up" :size="16" class="ico" /><span>{{ t('最近成交') }}</span></div>
+            <AppButton variant="ghost" size="sm" @click="router.push('/wallet')">{{ t('全部') }}</AppButton>
           </template>
           <div class="txs">
             <div v-for="b in profile.recentBilling(3)" :key="b.id" class="list-row tx-row">
               <span class="tx-row__ico" :class="'tx-' + b.type"><AppIcon :name="b.type === 'call' ? 'zap' : b.type === 'recharge' ? 'coins' : 'arrow-up-right'" :size="15" /></span>
               <div class="list-row__main">
-                <div class="list-row__title">{{ b.type === 'call' ? '调用 · ' + b.agent : b.type === 'recharge' ? '充值 · ' + b.agent : '提现 · ' + b.agent }}</div>
+                <div class="list-row__title">{{ b.type === 'call' ? t('调用 · {a}', { a: b.agent }) : b.type === 'recharge' ? t('充值 · {a}', { a: b.agent }) : t('提现 · {a}', { a: b.agent }) }}</div>
                 <div class="list-row__sub">{{ timeAgo(b.time) }}</div>
               </div>
               <span class="num" :class="b.amount > 0 ? 'num-up' : 'num-down'">{{ b.amount > 0 ? '+' : '' }}{{ money(b.amount) }}</span>

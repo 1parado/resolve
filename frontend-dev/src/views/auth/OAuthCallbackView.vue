@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useUiStore } from '@/stores/ui'
+import { t } from '@/i18n'
 import AppIcon from '@/components/icons/AppIcon.vue'
 
 const auth = useAuthStore()
@@ -13,7 +14,7 @@ onMounted(async () => {
   await new Promise((r) => setTimeout(r, 600))
   if (!auth.isAuthenticated) {
     await auth.login('github', { name: '陈默', github: 'chenmo-dev', email: 'chenmo.dev@gmail.com', color: '#1a73e8' })
-    ui.toast({ type: 'success', title: '登录成功', desc: '欢迎回来，陈默' })
+    ui.toast({ type: 'success', title: t('登录成功'), desc: t('欢迎回来，陈默') })
   }
   router.replace('/')
 })
@@ -23,8 +24,8 @@ onMounted(async () => {
   <div class="oauth-page">
     <div class="oauth-card">
       <span class="oauth-spinner"><AppIcon name="refresh" :size="22" /></span>
-      <p class="oauth-text">正在完成 GitHub 登录…</p>
-      <p class="oauth-sub">即将进入 Resolve 控制台</p>
+      <p class="oauth-text">{{ t('正在完成 GitHub 登录…') }}</p>
+      <p class="oauth-sub">{{ t('即将进入 Resolve 控制台') }}</p>
     </div>
   </div>
 </template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { t } from '@/i18n'
 import { identicon, initialsOf } from '@/utils/format'
 
 const props = withDefaults(
@@ -14,8 +15,8 @@ const props = withDefaults(
   { size: 40, status: '', square: false },
 )
 
-const imgSrc = computed(() => props.src || identicon(props.name || '匿名', props.size * 3))
-const initials = computed(() => initialsOf(props.name || '匿名'))
+const imgSrc = computed(() => props.src || identicon(props.name || t('匿名'), props.size * 3))
+const initials = computed(() => initialsOf(props.name || t('匿名')))
 const boxStyle = computed(() => ({ width: props.size + 'px', height: props.size + 'px' }))
 </script>
 

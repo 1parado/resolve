@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useUiStore } from '@/stores/ui'
+import { t, isEn } from '@/i18n'
 
 /* 纯 SVG 成交量热力图：53 列 × 7 行，末列底部对齐今天（GitHub 风格） */
 
@@ -47,7 +48,7 @@ const view = computed(() => {
       const d0 = new Date(start.getTime() + di0 * 86400000)
       if (d0.getMonth() !== lastMonth) {
         lastMonth = d0.getMonth()
-        months.push({ x: PAD + c * TOTAL + 1, label: d0.getMonth() + 1 + '月' })
+        months.push({ x: PAD + c * TOTAL + 1, label: isEn() ? String(d0.getMonth() + 1) : d0.getMonth() + 1 + t('月') })
       }
     }
   }
@@ -57,10 +58,11 @@ const view = computed(() => {
       if (idx < 0 || idx >= data.length) continue
       const v = data[idx]
       const d = new Date(start.getTime() + idx * 86400000)
+      const datePart = isEn() ? d.getMonth() + 1 + '/' + d.getDate() : d.getMonth() + 1 + '月' + d.getDate() + '日'
       cells.push({
         x: c * TOTAL,
         y: r * TOTAL,
-        tip: d.getMonth() + 1 + '月' + d.getDate() + '日 · ' + v + ' 单成交',
+        tip: datePart + ' · ' + v + t('单成交'),
         lvl: level(v),
         today: idx === data.length - 1,
       })
@@ -83,7 +85,7 @@ function onCellTap(c: Cell) {
         :width="W"
         :height="H"
         role="img"
-        aria-label="近 53 周每日成交量热力图"
+        :aria-label="t('近 53 周每日成交量热力图')"
       >
         <g class="heat-months">
           <text
@@ -113,9 +115,9 @@ function onCellTap(c: Cell) {
     </div>
     <div class="heat-foot">
       <span class="heat-legend">
-        <span class="heat-month">少</span>
+        <span class="heat-month">{{ t('少') }}</span>
         <span v-for="l in ['l0', 'l1', 'l2', 'l3', 'l4']" :key="l" :class="['heat-cell', l]" class="lg" />
-        <span class="heat-month">多</span>
+        <span class="heat-month">{{ t('多') }}</span>
       </span>
     </div>
   </div>

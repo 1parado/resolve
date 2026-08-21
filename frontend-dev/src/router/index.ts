@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { t } from '@/i18n'
 
 const routes: RouteRecordRaw[] = [
   // ---- 认证（无壳） ----
@@ -71,9 +72,13 @@ router.beforeEach((to) => {
   }
 })
 
-router.afterEach((to) => {
+export function applyTitle(to: { meta?: { title?: string } }): void {
   const base = 'Resolve · AI Agent 协作平台'
-  document.title = to.meta.title ? `${to.meta.title as string} · Resolve` : base
+  document.title = to.meta?.title ? `${t(String(to.meta.title))} · Resolve` : base
+}
+
+router.afterEach((to) => {
+  applyTitle(to)
 })
 
 export default router

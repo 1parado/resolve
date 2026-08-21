@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import AppIcon from '@/components/icons/AppIcon.vue'
+import { t } from '@/i18n'
 
 const TABS = [
   { to: '/', label: '概览', icon: 'home' },
@@ -17,13 +18,13 @@ function isActive(to: string, path: string): boolean {
 </script>
 
 <template>
-  <nav class="tabbar" aria-label="底部导航">
-    <RouterLink v-for="t in TABS" :key="t.to" :to="t.to" class="tabbar__item" :class="{ active: isActive(t.to, $route.path), cta: t.cta }">
-      <span v-if="t.cta" class="tabbar__cta">
-        <AppIcon :name="t.icon" :size="22" />
+  <nav class="tabbar" :aria-label="t('底部导航')">
+    <RouterLink v-for="tb in TABS" :key="tb.to" :to="tb.to" class="tabbar__item" :class="{ active: isActive(tb.to, $route.path), cta: tb.cta }">
+      <span v-if="tb.cta" class="tabbar__cta">
+        <AppIcon :name="tb.icon" :size="22" />
       </span>
-      <AppIcon v-else :name="t.icon" :size="20" />
-      <span class="tabbar__label">{{ t.label }}</span>
+      <AppIcon v-else :name="tb.icon" :size="20" />
+      <span class="tabbar__label">{{ t(tb.label) }}</span>
     </RouterLink>
   </nav>
 </template>

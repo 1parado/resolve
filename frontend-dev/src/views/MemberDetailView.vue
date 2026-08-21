@@ -10,6 +10,7 @@ import AppAvatar from '@/components/base/AppAvatar.vue'
 import AppTag from '@/components/base/AppTag.vue'
 import StatusDot from '@/components/base/StatusDot.vue'
 import EmptyState from '@/components/base/EmptyState.vue'
+import { t } from '@/i18n'
 import { identicon, money, timeAgo, mulberry32 } from '@/utils/format'
 
 const route = useRoute()
@@ -42,14 +43,14 @@ async function toggleRole() {
   if (!member.value) return
   const next = member.value.role === '管理员' ? '成员' : '管理员'
   await ent.setMemberRole(member.value.id, next)
-  ui.toast({ type: 'success', title: '已更新', desc: member.value.name + ' 当前为' + next })
+  ui.toast({ type: 'success', title: t('已更新'), desc: t('{n} 当前为 {r}', { n: member.value.name, r: next }) })
 }
 
 async function kick() {
   if (!member.value) return
   const name = member.value.name
   await ent.removeMember(member.value.id)
-  ui.toast({ type: 'info', title: '已移除成员', desc: name + ' 已移出 ' + ent.ent.name })
+  ui.toast({ type: 'info', title: t('已移除成员'), desc: t('{n} 已移出 {c}', { n: name, c: ent.ent.name }) })
   router.push('/enterprise')
 }
 </script>
@@ -59,9 +60,9 @@ async function kick() {
     <EmptyState
       v-if="!member"
       icon="help-circle"
-      title="未找到该成员"
-      desc="成员可能已被移除。"
-      action-text="返回企业版"
+      :title="t('未找到该成员')"
+      :desc="t('成员可能已被移除。')"
+      :action-text="t('返回企业版')"
       @action="router.push('/enterprise')"
     />
 
@@ -70,9 +71,9 @@ async function kick() {
         <div>
           <button class="back" @click="router.push('/enterprise')">
             <AppIcon name="chev-left" :size="15" />
-            <span>返回企业版</span>
+            <span>{{ t('返回企业版') }}</span>
           </button>
-          <h1 class="page-title">成员详情</h1>
+          <h1 class="page-title">{{ t('成员详情') }}</h1>
         </div>
       </div>
 
@@ -82,50 +83,50 @@ async function kick() {
           <div class="hero__info">
             <div class="hero__name-row">
               <h2 class="hero__name">{{ member.name }}</h2>
-              <AppTag v-if="member.role === '管理员'" variant="brand">管理员</AppTag>
-              <AppTag :variant="member.online ? 'success' : 'default'">{{ member.online ? '在线' : '离线' }}</AppTag>
+              <AppTag v-if="member.role === '管理员'" variant="brand">{{ t('管理员') }}</AppTag>
+              <AppTag :variant="member.online ? 'success' : 'default'">{{ member.online ? t('在线') : t('离线') }}</AppTag>
             </div>
             <div class="hero__meta">{{ member.job }} · {{ member.os.label }}</div>
           </div>
           <div class="hero__actions">
             <AppButton variant="ghost" size="sm" :icon="member.role === '管理员' ? 'chev-down' : 'chev-up'" @click="toggleRole">
-              {{ member.role === '管理员' ? '设为成员' : '设为管理员' }}
+              {{ member.role === '管理员' ? t('设为成员') : t('设为管理员') }}
             </AppButton>
-            <AppButton v-if="member.role !== '管理员'" variant="danger" size="sm" icon="trash" @click="kick">移除成员</AppButton>
+            <AppButton v-if="member.role !== '管理员'" variant="danger" size="sm" icon="trash" @click="kick">{{ t('移除成员') }}</AppButton>
           </div>
         </div>
       </AppCard>
 
       <div class="grid grid-3 stats">
-        <div class="e-stat"><span>本月调用</span><b class="num">{{ memberStat?.calls }}</b><em>次</em></div>
-        <div class="e-stat"><span>本月费用</span><b class="num">{{ money(memberStat?.fee || 0) }}</b><em></em></div>
-        <div class="e-stat"><span>调用成功率</span><b class="num">{{ memberStat?.rate }}</b><em>%</em></div>
+        <div class="e-stat"><span>{{ t('本月调用') }}</span><b class="num">{{ memberStat?.calls }}</b><em>{{ t('次') }}</em></div>
+        <div class="e-stat"><span>{{ t('本月费用') }}</span><b class="num">{{ money(memberStat?.fee || 0) }}</b><em></em></div>
+        <div class="e-stat"><span>{{ t('调用成功率') }}</span><b class="num">{{ memberStat?.rate }}</b><em>%</em></div>
       </div>
 
       <div class="grid grid-main-side main-grid">
         <AppCard>
           <template #head>
-            <div class="card-title"><AppIcon name="cpu" :size="16" class="ico" /><span>主机服务</span></div>
+            <div class="card-title"><AppIcon name="cpu" :size="16" class="ico" /><span>{{ t('主机服务') }}</span></div>
           </template>
           <div class="svc">
-            <div class="svc__row"><span>运行系统</span><b>{{ member.os.label }}</b></div>
-            <div class="svc__row"><span>在线状态</span><StatusDot :status="member.online ? 'online' : 'offline'" /></div>
-            <div class="svc__row"><span>托管 Agent</span><b class="svc__agents"><AppTag v-for="a in member.agents" :key="a">{{ a }}</AppTag></b></div>
-            <div class="svc__row"><span>可用模型</span><b class="svc__agents"><AppTag v-for="m in member.models" :key="m" variant="weak" class="mono-chip">{{ m }}</AppTag></b></div>
+            <div class="svc__row"><span>{{ t('运行系统') }}</span><b>{{ member.os.label }}</b></div>
+            <div class="svc__row"><span>{{ t('在线状态') }}</span><StatusDot :status="member.online ? 'online' : 'offline'" /></div>
+            <div class="svc__row"><span>{{ t('托管 Agent') }}</span><b class="svc__agents"><AppTag v-for="a in member.agents" :key="a">{{ a }}</AppTag></b></div>
+            <div class="svc__row"><span>{{ t('可用模型') }}</span><b class="svc__agents"><AppTag v-for="m in member.models" :key="m" variant="weak" class="mono-chip">{{ m }}</AppTag></b></div>
           </div>
         </AppCard>
 
         <AppCard>
           <template #head>
-            <div class="card-title"><AppIcon name="trending-up" :size="16" class="ico" /><span>近期调用</span></div>
-            <AppButton variant="ghost" size="sm" icon="zap" @click="ui.toast({ type: 'info', title: '调用演示', desc: '已向 ' + member.name + ' 发送一条演示调用' })">调用</AppButton>
+            <div class="card-title"><AppIcon name="trending-up" :size="16" class="ico" /><span>{{ t('近期调用') }}</span></div>
+            <AppButton variant="ghost" size="sm" icon="zap" @click="ui.toast({ type: 'info', title: t('调用演示'), desc: t('已向 {n} 发送一条演示调用', { n: member.name }) })">{{ t('调用') }}</AppButton>
           </template>
           <div class="txs">
             <div v-for="r in records" :key="r.id" class="list-row tx-row">
               <span class="tx-row__ico tx-call"><AppIcon name="zap" :size="15" /></span>
               <div class="list-row__main">
-                <div class="list-row__title">调用 · {{ r.agent }}</div>
-                <div class="list-row__sub">{{ timeAgo(r.time) }} · 余额</div>
+                <div class="list-row__title">{{ t('调用 · {a}', { a: r.agent }) }}</div>
+                <div class="list-row__sub">{{ timeAgo(r.time) }} · {{ t('余额') }}</div>
               </div>
               <span class="num num-down">{{ money(r.amount) }}</span>
             </div>

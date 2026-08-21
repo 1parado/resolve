@@ -9,6 +9,7 @@ import AppCard from '@/components/base/AppCard.vue'
 import AppTag from '@/components/base/AppTag.vue'
 import ProgressBar from '@/components/base/ProgressBar.vue'
 import EmptyState from '@/components/base/EmptyState.vue'
+import { t } from '@/i18n'
 import { fmtNum, timeAgo } from '@/utils/format'
 
 const route = useRoute()
@@ -18,38 +19,38 @@ const ui = useUiStore()
 
 const task = computed(() => tasks.items.find((t) => t.id === route.params.id))
 const steps = computed(() => [
-  { label: '任务创建', done: true },
-  { label: '环境准备与上下文加载', done: task.value ? task.value.progress >= 30 : false },
-  { label: '执行中', done: task.value ? task.value.progress >= 90 : false },
-  { label: '结果产出与计费', done: task.value ? task.value.status === 'done' : false },
+  { label: t('任务创建'), done: true },
+  { label: t('环境准备与上下文加载'), done: task.value ? task.value.progress >= 30 : false },
+  { label: t('执行中'), done: task.value ? task.value.progress >= 90 : false },
+  { label: t('结果产出与计费'), done: task.value ? task.value.status === 'done' : false },
 ])
 
 const logs = computed(() => {
   if (!task.value) return []
   const base = [
-    task.value.status === 'done' ? '任务完成，输出已归档' : '正在执行任务，进度 ' + task.value.progress + '%',
-    '已加载上下文：仓库结构 + 相关文件',
-    '已选用模型并结合任务提示词生成方案',
+    task.value.status === 'done' ? t('任务完成，输出已归档') : t('正在执行任务，进度 {p}%', { p: task.value.progress }),
+    t('已加载上下文：仓库结构 + 相关文件'),
+    t('已选用模型并结合任务提示词生成方案'),
   ]
-  if (task.value.status === 'failed') base.unshift('执行中断：上下文窗口不足，已自动重试一次')
+  if (task.value.status === 'failed') base.unshift(t('执行中断：上下文窗口不足，已自动重试一次'))
   return base
 })
 
 const pricePerK = computed(() => {
   if (!task.value || task.value.cost === 0) return '—'
-  return '¥' + (task.value.cost / Math.max(1, task.value.tokens / 1000)).toFixed(2) + '/千token'
+  return '¥' + (task.value.cost / Math.max(1, task.value.tokens / 1000)).toFixed(2) + '/' + t('千token')
 })
 
 async function cancelTask() {
   if (!task.value) return
   await tasks.cancel(task.value.id)
-  ui.toast({ type: 'info', title: '已终止任务' })
+  ui.toast({ type: 'info', title: t('已终止任务') })
 }
 
 async function rerunTask() {
   if (!task.value) return
   await tasks.rerun(task.value.id)
-  ui.toast({ type: 'info', title: '任务重新执行中' })
+  ui.toast({ type: 'info', title: t('任务重新执行中') })
 }
 </script>
 
@@ -58,9 +59,9 @@ async function rerunTask() {
     <EmptyState
       v-if="!task"
       icon="help-circle"
-      title="未找到该任务"
-      desc="任务可能已被删除。"
-      action-text="返回任务中心"
+      :title="t('未找到该任务')"
+      :desc="t('任务可能已被删除。')"
+      :action-text="t('返回任务中心')"
       @action="router.push('/tasks')"
     />
 
@@ -69,11 +70,11 @@ async function rerunTask() {
         <div>
           <button class="back" @click="router.push('/tasks')">
             <AppIcon name="chev-left" :size="15" />
-            <span>返回任务中心</span>
+            <span>{{ t('返回任务中心') }}</span>
           </button>
           <h1 class="page-title">{{ task.title }}</h1>
           <p class="page-sub">
-            {{ task.agent }} · {{ task.type === 'schedule' ? (task.schedule || '定时执行') : '一次性' }} · 创建于 {{ timeAgo(task.created) }}
+            {{ task.agent }} · {{ task.type === 'schedule' ? (task.schedule || t('定时执行')) : t('一次性') }} · {{ t('创建于 {d}', { d: timeAgo(task.created) }) }}
           </p>
         </div>
       </div>
@@ -82,17 +83,17 @@ async function rerunTask() {
         <div class="stack stack-16">
           <AppCard>
             <template #head>
-              <div class="card-title"><AppIcon name="cpu" :size="16" class="ico" /><span>执行进度</span></div>
-              <AppTag v-if="task.status === 'running'" variant="brand" dot>执行中</AppTag>
-              <AppTag v-else-if="task.status === 'done'" variant="success" dot>已完成</AppTag>
-              <AppTag v-else-if="task.status === 'failed'" variant="danger" dot>失败</AppTag>
-              <AppTag v-else variant="warn" dot>{{ task.status === 'cancelled' ? '已终止' : '排队中' }}</AppTag>
+              <div class="card-title"><AppIcon name="cpu" :size="16" class="ico" /><span>{{ t('执行进度') }}</span></div>
+              <AppTag v-if="task.status === 'running'" variant="brand" dot>{{ t('执行中') }}</AppTag>
+              <AppTag v-else-if="task.status === 'done'" variant="success" dot>{{ t('已完成') }}</AppTag>
+              <AppTag v-else-if="task.status === 'failed'" variant="danger" dot>{{ t('失败') }}</AppTag>
+              <AppTag v-else variant="warn" dot>{{ task.status === 'cancelled' ? t('已终止') : t('排队中') }}</AppTag>
             </template>
             <div class="prog">
               <ProgressBar :value="task.progress" :height="8" :color="task.status === 'failed' ? 'var(--danger)' : task.status === 'done' ? 'var(--success)' : undefined" />
               <div class="prog__row">
                 <span class="num">{{ task.progress }}%</span>
-                <span>{{ task.status === 'done' ? '已完成' : '预计还需 2-5 分钟' }}</span>
+                <span>{{ task.status === 'done' ? t('已完成') : t('预计还需 2-5 分钟') }}</span>
               </div>
             </div>
             <div class="steps">
@@ -105,7 +106,7 @@ async function rerunTask() {
 
           <AppCard>
             <template #head>
-              <div class="card-title"><AppIcon name="terminal" :size="16" class="ico" /><span>执行日志</span></div>
+              <div class="card-title"><AppIcon name="terminal" :size="16" class="ico" /><span>{{ t('执行日志') }}</span></div>
             </template>
             <div class="logs">
               <div v-for="(l, i) in logs" :key="i" class="log mono">
@@ -114,7 +115,7 @@ async function rerunTask() {
               </div>
               <div v-if="task.status === 'running'" class="log mono log--dim">
                 <span class="log__t">&gt;</span>
-                <span>等待 Agent 输出…</span>
+                <span>{{ t('等待 Agent 输出…') }}</span>
               </div>
             </div>
           </AppCard>
@@ -123,24 +124,24 @@ async function rerunTask() {
         <div class="stack stack-16">
           <AppCard>
             <template #head>
-              <div class="card-title"><AppIcon name="gauge" :size="16" class="ico" /><span>任务统计</span></div>
+              <div class="card-title"><AppIcon name="gauge" :size="16" class="ico" /><span>{{ t('任务统计') }}</span></div>
             </template>
             <div class="stats">
-              <div class="stat"><span>消耗 token</span><b class="num">{{ fmtNum(task.tokens) }}</b></div>
-              <div class="stat"><span>执行费用</span><b class="num">¥{{ task.cost.toFixed(2) }}</b></div>
-              <div class="stat"><span>折算单价</span><b class="num">{{ pricePerK }}</b></div>
-              <div class="stat"><span>执行 Agent</span><b>{{ task.agent }}</b></div>
+              <div class="stat"><span>{{ t('消耗 token') }}</span><b class="num">{{ fmtNum(task.tokens) }}</b></div>
+              <div class="stat"><span>{{ t('执行费用') }}</span><b class="num">¥{{ task.cost.toFixed(2) }}</b></div>
+              <div class="stat"><span>{{ t('折算单价') }}</span><b class="num">{{ pricePerK }}</b></div>
+              <div class="stat"><span>{{ t('执行 Agent') }}</span><b>{{ task.agent }}</b></div>
             </div>
           </AppCard>
 
           <AppCard>
             <template #head>
-              <div class="card-title"><AppIcon name="zap" :size="16" class="ico" /><span>操作</span></div>
+              <div class="card-title"><AppIcon name="zap" :size="16" class="ico" /><span>{{ t('操作') }}</span></div>
             </template>
             <div class="ops">
-              <AppButton v-if="task.status === 'running' || task.status === 'pending'" variant="danger" size="block" icon="x" @click="cancelTask">终止任务</AppButton>
-              <AppButton v-if="task.status === 'failed' || task.status === 'cancelled'" variant="primary" size="block" icon="refresh" @click="rerunTask">重新执行</AppButton>
-              <AppButton variant="ghost" size="block" icon="chat" @click="ui.toast({ type: 'info', title: '讨论功能即将上线', desc: '后续可围绕任务进行多轮对话' })">与任务讨论</AppButton>
+              <AppButton v-if="task.status === 'running' || task.status === 'pending'" variant="danger" size="block" icon="x" @click="cancelTask">{{ t('终止任务') }}</AppButton>
+              <AppButton v-if="task.status === 'failed' || task.status === 'cancelled'" variant="primary" size="block" icon="refresh" @click="rerunTask">{{ t('重新执行') }}</AppButton>
+              <AppButton variant="ghost" size="block" icon="chat" @click="ui.toast({ type: 'info', title: t('讨论功能即将上线'), desc: t('后续可围绕任务进行多轮对话') })">{{ t('与任务讨论') }}</AppButton>
             </div>
           </AppCard>
         </div>

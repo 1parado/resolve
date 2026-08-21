@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useUiStore } from '@/stores/ui'
+import { t } from '@/i18n'
 import AppIcon from '@/components/icons/AppIcon.vue'
 import AppButton from '@/components/base/AppButton.vue'
 import AppInput from '@/components/base/AppInput.vue'
@@ -20,23 +21,23 @@ const err = ref('')
 
 function sendCode() {
   if (!/^\S+@\S+\.\S+$/.test(email.value.trim())) {
-    err.value = '请先输入正确的邮箱'
+    err.value = t('请先输入正确的邮箱')
     return
   }
-  ui.toast({ type: 'info', title: '验证码已发送（模拟）', desc: '演示环境验证码：123456' })
+  ui.toast({ type: 'info', title: t('验证码已发送（模拟）'), desc: t('演示环境验证码：123456') })
 }
 
 async function submit() {
   if (!name.value.trim() || !email.value.trim() || !password.value) {
-    err.value = '请填写昵称、邮箱与密码'
+    err.value = t('请填写昵称、邮箱与密码')
     return
   }
   if (code.value.trim() !== '123456') {
-    err.value = '验证码不正确（演示环境为 123456）'
+    err.value = t('验证码不正确（演示环境为 123456）')
     return
   }
   await auth.login('email', { name: name.value.trim(), email: email.value.trim(), color: '#1a73e8' })
-  ui.toast({ type: 'success', title: '注册成功', desc: '欢迎加入 Resolve，' + name.value.trim() })
+  ui.toast({ type: 'success', title: t('注册成功'), desc: t('欢迎加入 Resolve，{name}', { name: name.value.trim() }) })
   router.push('/')
 }
 </script>
@@ -46,40 +47,40 @@ async function submit() {
     <section class="auth__brand">
       <div class="brand-inner">
         <div class="brand-logo"><span>R</span><span class="brand-logo__name">Re<em>solve</em></span></div>
-        <h1 class="brand-title">让每一个终端成为可调用的 AI 节点</h1>
-        <p class="brand-sub">接入本地 Agent 与模型，按 token 按次付费，企业内网数据不出局域网。</p>
-        <div class="brand-foot">Resolve · AI Agent 协作平台</div>
+        <h1 class="brand-title">{{ t('让每一个终端成为可调用的 AI 节点') }}</h1>
+        <p class="brand-sub">{{ t('接入本地 Agent 与模型，按 token 按次付费，企业内网数据不出局域网。') }}</p>
+        <div class="brand-foot">{{ t('Resolve · AI Agent 协作平台') }}</div>
       </div>
     </section>
 
     <section class="auth__panel">
       <div class="panel-inner">
-        <h2 class="panel-title">创建账号</h2>
-        <p class="panel-sub">注册 Resolve 控制台，开始接入与调用 Agent</p>
+        <h2 class="panel-title">{{ t('创建账号') }}</h2>
+        <p class="panel-sub">{{ t('注册 Resolve 控制台，开始接入与调用 Agent') }}</p>
 
         <form class="panel-form" @submit.prevent="submit">
-          <AppField label="昵称" required>
-            <AppInput v-model="name" placeholder="你的昵称" />
+          <AppField :label="t('昵称')" required>
+            <AppInput v-model="name" :placeholder="t('你的昵称')" />
           </AppField>
-          <AppField label="邮箱" required>
-            <AppInput v-model="email" type="email" placeholder="name@example.com" autocomplete="email" />
+          <AppField :label="t('邮箱')" required>
+            <AppInput v-model="email" type="email" :placeholder="t('邮箱地址')" autocomplete="email" />
           </AppField>
-          <AppField label="验证码" required>
+          <AppField :label="t('验证码')" required>
             <div class="code-row">
-              <AppInput v-model="code" style="flex: 1" placeholder="6 位验证码" :maxlength="6" />
-              <AppButton variant="ghost" size="md" @click="sendCode">获取验证码</AppButton>
+              <AppInput v-model="code" style="flex: 1" :placeholder="t('6 位验证码')" :maxlength="6" />
+              <AppButton variant="ghost" size="md" @click="sendCode">{{ t('获取验证码') }}</AppButton>
             </div>
           </AppField>
-          <AppField label="密码" required>
-            <AppInput v-model="password" type="password" placeholder="至少 6 位" autocomplete="new-password" />
+          <AppField :label="t('密码')" required>
+            <AppInput v-model="password" type="password" :placeholder="t('至少 6 位')" autocomplete="new-password" />
           </AppField>
           <p v-if="err" class="form-err">{{ err }}</p>
-          <AppButton type="submit" variant="primary" size="block">创建账号</AppButton>
+          <AppButton type="submit" variant="primary" size="block">{{ t('创建账号') }}</AppButton>
         </form>
 
         <p class="panel-switch">
-          已有账号？
-          <RouterLink to="/login" class="panel-link">去登录</RouterLink>
+          {{ t('已有账号？') }}
+          <RouterLink to="/login" class="panel-link">{{ t('去登录') }}</RouterLink>
         </p>
       </div>
     </section>

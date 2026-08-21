@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProfileStore } from '@/stores/profile'
 import { useUiStore } from '@/stores/ui'
+import { t } from '@/i18n'
 import AppButton from '@/components/base/AppButton.vue'
 import AppCard from '@/components/base/AppCard.vue'
 import AppInput from '@/components/base/AppInput.vue'
@@ -35,7 +36,7 @@ function onOsChange(e: Event) {
 
 async function save() {
   if (!name.value.trim()) {
-    err.value = '昵称不能为空'
+    err.value = t('昵称不能为空')
     return
   }
   await profile.edit({
@@ -45,7 +46,7 @@ async function save() {
     bio: bio.value.trim(),
     os: { id: osId.value, label: osLabel.value },
   })
-  ui.toast({ type: 'success', title: '已保存', desc: '个人资料已更新' })
+  ui.toast({ type: 'success', title: t('已保存'), desc: t('个人资料已更新') })
   router.push('/u/chenmo-dev')
 }
 </script>
@@ -54,35 +55,35 @@ async function save() {
   <div class="page page-narrow">
     <div class="page-head">
       <div>
-        <h1 class="page-title">编辑资料</h1>
-        <p class="page-sub">维护你的公开身份信息，其他用户可见</p>
+        <h1 class="page-title">{{ t('编辑资料') }}</h1>
+        <p class="page-sub">{{ t('维护你的公开身份信息，其他用户可见') }}</p>
       </div>
     </div>
 
     <AppCard pad="lg">
       <div class="form-grid form-grid-2">
-        <AppField label="昵称" required>
-          <AppInput v-model="name" placeholder="你的昵称" />
+        <AppField :label="t('昵称')" required>
+          <AppInput v-model="name" :placeholder="t('你的昵称')" />
         </AppField>
-        <AppField label="GitHub 用户名">
+        <AppField :label="t('GitHub 用户名')">
           <AppInput v-model="github" placeholder="chenmo-dev" />
         </AppField>
-        <AppField label="职业 / 头衔" hint="显示在个人主页姓名下方">
-          <AppInput v-model="job" placeholder="全栈工程师 · 独立 Agent 开发者" />
+        <AppField :label="t('职业 / 头衔')" :hint="t('显示在个人主页姓名下方')">
+          <AppInput v-model="job" :placeholder="t('全栈工程师 · 独立 Agent 开发者')" />
         </AppField>
-        <AppField label="常用操作系统">
+        <AppField :label="t('常用操作系统')">
           <select class="select" :value="osId" @change="onOsChange">
             <option v-for="o in OS_OPTIONS" :key="o.id" :value="o.id">{{ o.label }}</option>
           </select>
         </AppField>
-        <AppField label="个人简介" hint="一句话介绍你的 Agent 服务">
+        <AppField :label="t('个人简介')" :hint="t('一句话介绍你的 Agent 服务')">
           <textarea v-model="bio" class="textarea" rows="4" />
         </AppField>
       </div>
       <p v-if="err" class="err">{{ err }}</p>
       <div class="foot">
-        <AppButton variant="ghost" @click="router.push('/u/chenmo-dev')">取消</AppButton>
-        <AppButton variant="primary" icon="check" @click="save">保存修改</AppButton>
+        <AppButton variant="ghost" @click="router.push('/u/chenmo-dev')">{{ t('取消') }}</AppButton>
+        <AppButton variant="primary" icon="check" @click="save">{{ t('保存修改') }}</AppButton>
       </div>
     </AppCard>
   </div>
