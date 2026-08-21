@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Resolve Console — Agents SaaS 平台控制台：接入本地 Agent、上架市场、按次付费、企业内网协作。">
+  <title>Resolve · 控制台</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%231a73e8'/%3E%3Cpath d='M12 3.5 4.5 7.8v8.4L12 20.5l7.5-4.3V7.8Z' fill='none' stroke='%23fff' stroke-width='2' stroke-linejoin='round'/%3E%3Ccircle cx='18.5' cy='18.5' r='2' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./static/css/tokens.css">
+  <link rel="stylesheet" href="./static/css/app.css">
+</head>
+<body>
+
+<!-- 应用外壳（由 app.js 装配；登录页为独立全屏布局） -->
+<div class="app" id="app" hidden>
+  <!-- 桌面侧边栏 -->
+  <aside class="sidebar" id="sidebar">
+    <a class="logo" href="#/" data-nav="home">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 2 3 7v10l9 5 9-5V7l-9-5zm0 2.2L18.5 9 12 13.8 5.5 9 12 4.2z" fill="#fff"/><circle cx="19" cy="19" r="3" fill="#fff" opacity=".9"/></svg>
+      </span>
+      <span class="logo-text">Re<em>solve</em></span>
+    </a>
+
+    <nav class="nav" aria-label="主导航">
+      <a class="nav-item" href="#/" data-nav="profile">
+        <span class="nav-ico">__ICON__</span><span class="nav-lbl">个人主页</span>
+      </a>
+      <a class="nav-item" href="#/marketplace" data-nav="marketplace">
+        <span class="nav-ico">__ICON__</span><span class="nav-lbl">Agent 市场</span>
+      </a>
+      <a class="nav-item" href="#/connect" data-nav="connect">
+        <span class="nav-ico">__ICON__</span><span class="nav-lbl">接入</span>
+      </a>
+      <a class="nav-item" href="#/wallet" data-nav="wallet">
+        <span class="nav-ico">__ICON__</span><span class="nav-lbl">钱包</span>
+      </a>
+      <a class="nav-item" href="#/enterprise" data-nav="enterprise">
+        <span class="nav-ico">__ICON__</span><span class="nav-lbl">企业版</span>
+      </a>
+    </nav>
+
+    <div class="side-foot">
+      <div class="side-balance">
+        <span class="sb-lbl">账户余额</span>
+        <span class="sb-num" id="sideBalance">¥0.00</span>
+        <a class="sb-link" href="#/wallet">充值</a>
+      </div>
+      <div class="side-user" id="sideUser"><!-- app.js 装配 --></div>
+    </div>
+  </aside>
+
+  <!-- 主区域 -->
+  <div class="main">
+    <header class="topbar" id="topbar">
+      <button class="icon-btn top-menu" id="topMenuBtn" aria-label="打开导航菜单">__ICON__</button>
+      <div class="top-title" id="topTitle">个人主页</div>
+      <div class="top-actions">
+        <a class="chip chip-balance" href="#/wallet">
+          <span class="chip-ico">__ICON__</span>
+          <span id="topBalance">¥0.00</span>
+        </a>
+        <button class="icon-btn" id="bellBtn" aria-label="通知">__ICON__<span class="dot-badge"></span></button>
+        <div class="top-avatar" id="topAvatar"><!-- app.js 装配 --></div>
+      </div>
+    </header>
+
+    <main class="content" id="view" tabindex="-1"><!-- 页面渲染区 --></main>
+  </div>
+
+  <!-- 移动端底部 Tab 栏 -->
+  <nav class="tabbar" id="tabbar" aria-label="移动端导航">
+    <a class="tab-item" href="#/" data-nav="profile">
+      <span class="tab-ico">__ICON__</span><span class="tab-lbl">主页</span>
+    </a>
+    <a class="tab-item" href="#/marketplace" data-nav="marketplace">
+      <span class="tab-ico">__ICON__</span><span class="tab-lbl">市场</span>
+    </a>
+    <a class="tab-item tab-cta" href="#/connect" data-nav="connect">
+      <span class="tab-ico">__ICON__</span><span class="tab-lbl">接入</span>
+    </a>
+    <a class="tab-item" href="#/wallet" data-nav="wallet">
+      <span class="tab-ico">__ICON__</span><span class="tab-lbl">钱包</span>
+    </a>
+    <a class="tab-item" href="#/enterprise" data-nav="enterprise">
+      <span class="tab-ico">__ICON__</span><span class="tab-lbl">企业</span>
+    </a>
+  </nav>
+</div>
+
+<!-- 独立全屏页（登录等） -->
+<div class="fullpage" id="fullpage"><!-- auth 渲染区 --></div>
+
+<!-- 弹层根容器 -->
+<div id="modal-root"></div>
+<div id="toast-root" class="toast-wrap" aria-live="polite"></div>
+
+<script src="./static/js/core/icons.js"></script>
+<script src="./static/js/core/mock.js"></script>
+<script src="./static/js/core/ui.js"></script>
+<script src="./static/js/core/heatmap.js"></script>
+<script src="./static/js/core/router.js"></script>
+<script src="./static/js/pages/auth.js"></script>
+<script src="./static/js/pages/profile.js"></script>
+<script src="./static/js/pages/connect.js"></script>
+<script src="./static/js/pages/marketplace.js"></script>
+<script src="./static/js/pages/wallet.js"></script>
+<script src="./static/js/pages/enterprise.js"></script>
+<script src="./static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+/* ==========================================================================
+   tokens.css — 由 ../static/css/theme.css 的 :root Design Tokens 原样继承，
+   保证控制台与营销页共享同一套品牌 token；下方追加少量应用级扩展。
+   ========================================================================== */
+
+:root {
+  /* ---------- Brand（源自 theme.css，原样保留） ---------- */
+  --brand: #1a73e8;
+  --brand-hover: #1565c0;
+  --brand-soft: rgba(26, 115, 232, 0.08);
+  --brand-line: rgba(26, 115, 232, 0.22);
+  --brand-grad: linear-gradient(135deg, #1565c0 0%, #4a90e2 100%);
+  --success: #10b981;
+  --navy: #0F172A;
+
+  --c-client:  #3B82F6;
+  --c-pay:     #10B981;
+  --c-platform:#7C3AED;
+  --c-saas:    #1a73e8;
+  --c-enterprise:#06B6D4;
+  --c-warn:    #F59E0B;
+
+  /* ---------- Text（源自 theme.css） ---------- */
+  --text-strong: #1a1a1a;
+  --text-body: #4a4a4a;
+  --text-mid: #666;
+  --text-weak: #7a7a7a;
+  --text-faint: #9a9a9a;
+  --text-nav: #a6a6a6;
+
+  /* ---------- Surfaces & borders（源自 theme.css） ---------- */
+  --surface: #ffffff;
+  --surface-soft: #f7f7f6;
+  --surface-code: #0f1115;
+  --border: rgba(0, 0, 0, 0.06);
+  --border-strong: rgba(0, 0, 0, 0.10);
+
+  /* ---------- Radius / Shadow（源自 theme.css） ---------- */
+  --r-sm: 6px;  --r-pill: 100px;
+  --r-md: 10px; --r-card: 24px; --r-hero: 28px;
+  --sh-1: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --sh-2: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --sh-3: 0 16px 48px rgba(0, 0, 0, 0.10);
+  --sh-brand: 0 12px 32px rgba(26, 115, 232, 0.30);
+
+  /* ---------- Typography（源自 theme.css） ---------- */
+  --font-display: 'Space Grotesk', -apple-system, sans-serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'Fira Code', ui-monospace, Menlo, Consolas, monospace;
+
+  /* ============================================================
+     应用级扩展（iOS + 语雀 视觉）
+     ============================================================ */
+
+  /* 语义色 */
+  --danger: #e5484d;
+  --danger-soft: rgba(229, 72, 77, 0.08);
+  --ok: var(--success);
+  --ok-soft: rgba(16, 185, 129, 0.10);
+  --warn-soft: rgba(245, 158, 11, 0.12);
+  --info-soft: var(--brand-soft);
+
+  /* 画布 / 毛玻璃 */
+  --app-bg: #f5f6f7;
+  --frosted: rgba(255, 255, 255, 0.72);
+  --frosted-strong: rgba(255, 255, 255, 0.86);
+  --hairline: rgba(0, 0, 0, 0.07);
+
+  /* 圆角（应用级） */
+  --r-panel: 16px;
+  --r-control: 10px;
+  --r-sheet: 22px;
+
+  /* 动效 */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur: 0.22s;
+  --dur-slow: 0.38s;
+
+  /* 布局尺寸 */
+  --sidebar-w: 232px;
+  --topbar-h: 60px;
+  --tabbar-h: 60px;
+  --content-max: 1080px;
+
+  /* 热力图配色（GitHub 风格 · 品牌蓝 5 档） */
+  --heat-0: #ebf3ff;
+  --heat-1: #cfe3ff;
+  --heat-2: #8cc0ff;
+  --heat-3: #3f8dff;
+  --heat-4: #1a73e8;
+}

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Resolve — AI Agent 协作平台。客户端打包上下文，按预估 token + 人员时薪预付款，平台路由分发，SAAS 多用户接入本地 Agent 与模型，企业局域网内互相查看与调用。">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resolve · AI Agent 协作平台</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/theme.css">
+  <script src="./static/js/scroll-nav.js"></script>
+</head>
+<body>
+
+<span id="top"></span>
+
+<!-- ===================== 顶部导航（滚动出现） ===================== -->
+<nav class="top-nav" id="topNav" style="display:none;">
+  <div class="tn-inner">
+    <a class="tn-logo" href="#top"><span style="font-family:var(--font-display); font-weight:700; font-size:18px; color:var(--brand);">Re</span><span style="font-family:var(--font-display); font-weight:700; font-size:18px; color:var(--text-strong);">solve</span></a>
+    <div class="tn-links">
+      <a href="#overview">架构</a>
+      <a href="#saas">SAAS</a>
+      <a href="#enterprise">企业版</a>
+      <a href="#agents">Agent 市场</a>
+      <a href="#pricing">定价</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===================== 侧边章节进度导航 ===================== -->
+<nav class="side-nav">
+  <a href="#overview" data-target="overview"><span class="dot"></span><span class="lbl">Overview</span></a>
+  <a href="#flow" data-target="flow"><span class="dot"></span><span class="lbl">Flow</span></a>
+  <a href="#saas" data-target="saas"><span class="dot"></span><span class="lbl">SAAS</span></a>
+  <a href="#enterprise" data-target="enterprise"><span class="dot"></span><span class="lbl">Enterprise</span></a>
+  <a href="#agents" data-target="agents"><span class="dot"></span><span class="lbl">Agents</span></a>
+  <a href="#usecases" data-target="usecases"><span class="dot"></span><span class="lbl">Usecases</span></a>
+  <a href="#demo" data-target="demo"><span class="dot"></span><span class="lbl">Demo</span></a>
+  <a href="#pricing" data-target="pricing"><span class="dot"></span><span class="lbl">Pricing</span></a>
+</nav>
+
+<!-- ===================== Hero ===================== -->
+<section class="pp-section" style="padding-top:2.5rem; padding-bottom:.5rem;">
+  <div class="pp-container-wide">
+    <div class="hero-flow">
+      <div class="hero-orb" aria-hidden="true"></div>
+      <h1 class="hero-text"><span class="accent">Resolve</span></h1>
+      <div class="sub-hero-text">AI Agent 协作平台 —— 让每个人都能调用任意 Agent 与模型</div>
+      <div class="hero-pill-row">
+        <span class="hero-pill">多用户协作</span>
+        <span class="hero-pill">局域网部署</span>
+        <span class="hero-pill">按 Token 预付款</span>
+        <span class="hero-pill">模型市场</span>
+      </div>
+      <div class="hero-byline">普通用户 · 认证公司 · 博主服务方 —— <b>三类角色，一个平台</b></div>
+      <div class="hero-actions">
+        <a class="cta primary" href="./frontend-preview/index.html">进入控制台</a>
+        <a class="cta dark" href="#enterprise">企业版演示</a>
+        <a class="cta outline-red" href="#agents">浏览 Agent 市场</a>
+      </div>
+      <div class="hero-waves" aria-hidden="true">
+        <svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+          <defs><path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"></path></defs>
+          <g class="wave-parallax">
+            <use href="#gentle-wave" x="48" y="0" fill="rgba(26,115,232,0.22)"></use>
+            <use href="#gentle-wave" x="48" y="3" fill="rgba(26,115,232,0.14)"></use>
+            <use href="#gentle-wave" x="48" y="5" fill="rgba(15,23,42,0.12)"></use>
+            <use href="#gentle-wave" x="48" y="7" fill="rgba(26,115,232,0.20)"></use>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 1. 架构总览 ===================== -->
+<section class="pp-section" id="overview">
+  <div class="pp-container-wide">
+    <div class="sec-eyebrow">Overview</div>
+    <h2 class="tagline">系统架构总览</h2>
+    <div class="arch-wrap">
+      <div class="arch-grid">
+        <div class="arch-col client">
+          <div class="arch-col-head"><span class="ico">💻</span>客户端</div>
+          <div class="arch-col-body">
+            <div class="arch-item"><span class="ic">📦</span><div><div class="it">打包上下文</div><div class="id">代码 / 文档 / 问题描述</div></div></div>
+            <div class="arch-item"><span class="ic">🎯</span><div><div class="it">预期结果</div><div class="id">期望输出 / 格式 / 约束</div></div></div>
+            <div class="arch-item"><span class="ic">🚀</span><div><div class="it">提交请求</div><div class="id">发送到平台处理</div></div></div>
+          </div>
+        </div>
+        <div class="arch-col pay">
+          <div class="arch-col-head"><span class="ico">💳</span>支付宝 / 微信</div>
+          <div class="arch-col-body">
+            <div class="arch-item"><span class="ic">🧮</span><div><div class="it">预算计算</div><div class="id">预估 token × 人员时薪</div></div></div>
+            <div class="arch-item"><span class="ic">💰</span><div><div class="it">充值支付</div><div class="id">支付宝 / 微信支付</div></div></div>
+            <div class="arch-item"><span class="ic">📊</span><div><div class="it">余额管理</div><div class="id">可用余额 / 消费明细</div></div></div>
+          </div>
+        </div>
+        <div class="arch-col platform">
+          <div class="arch-col-head"><span class="ico">🌐</span>平台</div>
+          <div class="arch-col-body">
+            <div class="arch-item"><span class="ic">🔀</span><div><div class="it">请求路由</div><div class="id">分发到合适 SAAS 实例</div></div></div>
+            <div class="arch-item"><span class="ic">🧾</span><div><div class="it">计费管理</div><div class="id">按 token 消耗 + 时薪计费</div></div></div>
+            <div class="arch-item"><span class="ic">💰</span><div><div class="it">结算系统</div><div class="id">记录消费 / 生成账单</div></div></div>
+            <div class="arch-item"><span class="ic">📡</span><div><div class="it">监控系统</div><div class="id">请求监控 / 资源监控</div></div></div>
+          </div>
+        </div>
+        <div class="arch-col saas">
+          <div class="arch-col-head"><span class="ico">👥</span>SAAS（用户层）</div>
+          <div class="arch-col-body">
+            <div class="arch-item"><span class="ic">👤</span><div><div class="it">用户列表</div><div class="id">头像 / 职业 / 运行环境可见</div></div></div>
+            <div class="arch-item"><span class="ic">🤖</span><div><div class="it">拥有 Agent</div><div class="id">接入本机不同 Agent</div></div></div>
+            <div class="arch-item"><span class="ic">⚙️</span><div><div class="it">模型配置</div><div class="id">Claude / GPT / Gemini / Qwen</div></div></div>
+            <div class="arch-item"><span class="ic">🔐</span><div><div class="it">登录与计费</div><div class="id">用户登录 / 对应模型收费</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-flow-row">
+        <div class="chip">客户端 → 平台：<b>提交请求</b> · 预算预估</div>
+        <div class="chip">平台 → SAAS：<b>服务分发</b> · 余额校验</div>
+        <div class="chip">SAAS → 客户端：<b>返回结果</b> · 使用数据回传</div>
+      </div>
+
+      <div class="arch-enterprise">
+        <div class="ent-label">
+          <span class="t">🏢 企业版</span>
+          <span class="s">私有部署 · 局域网内<br>数据不出内网 · 安全可控<br>高效协作</span>
+        </div>
+        <div class="emp">
+          <h5>👨‍💻 A 员工</h5>
+          <div class="meta"><b>开发工程师</b> · Windows 11</div>
+          <div class="pillrow">
+            <span class="p">代码助手 Agent</span>
+            <span class="p">测试生成 Agent</span>
+            <span class="p">文档生成 Agent</span>
+          </div>
+          <div class="models">模型：<b>GPT-4o · Claude-3.5 · CodeLlama-34B</b></div>
+        </div>
+        <div class="mutual">
+          <div class="blk"><div class="k">👀 互相查看</div><div class="l">对方头像 / 职业 / 运行环境 / 拥有的 Agent / 模型配置</div></div>
+          <div class="blk"><div class="k">🔄 互相调用</div><div class="l">调用对方 Agent · 使用对方模型服务 · 协作完成任务</div></div>
+        </div>
+        <div class="emp">
+          <h5>👩‍🔬 B 员工</h5>
+          <div class="meta"><b>算法工程师</b> · macOS 14.5</div>
+          <div class="pillrow">
+            <span class="p">数据分析 Agent</span>
+            <span class="p">模型训练 Agent</span>
+          </div>
+          <div class="models">模型：<b>Gemini-1.5 Pro · Claude-3.5 · Qwen-2.5-72B</b></div>
+        </div>
+        <div class="admin">
+          <h5>🛡 企业管理员</h5>
+          <ul>
+            <li>成员管理</li>
+            <li>权限管理</li>
+            <li>资源监控</li>
+            <li>计费管理</li>
+            <li>日志审计</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <p class="tldr-caption">完整的闭环：客户端<b>打包上下文与预期结果</b>，按<b>预估 token × 人员时薪</b>预付款，平台<b>路由与计费</b>，SAAS 用户层的每个人接入自己电脑上的 Agent 与模型——既服务自己，也服务他人。</p>
+  </div>
+</section>
+
+<!-- ===================== 2. 业务流程 ===================== -->
+<section class="pp-section" id="flow">
+  <div class="pp-container-wide">
+    <div class="sec-eyebrow">Flow</div>
+    <h2 class="tagline">四步完成一次协作</h2>
+    <div class="flow-steps">
+      <div class="flow-step client">
+        <span class="num">STEP 1</span>
+        <div class="ico">📦</div>
+        <div class="t">客户端打包上下文</div>
+        <div class="d">把代码、文档、问题描述与预期产出（期望输出 / 格式 / 约束条件）一起打包，提交请求。</div>
+      </div>
+      <div class="flow-step pay">
+        <span class="num">STEP 2</span>
+        <div class="ico">💳</div>
+        <div class="t">预付款（支付宝/微信）</div>
+        <div class="d">平台按预估 token 消耗量 × 执行者人员时薪计算预算，用户通过支付宝或微信充值支付，余额实时可见。</div>
+      </div>
+      <div class="flow-step platform">
+        <span class="num">STEP 3</span>
+        <div class="ico">🔀</div>
+        <div class="t">平台路由分发</div>
+        <div class="d">根据任务类型与预算，把请求路由到合适的 SAAS 实例；计费、结算、监控系统全程记录。</div>
+      </div>
+      <div class="flow-step saas">
+        <span class="num">STEP 4</span>
+        <div class="ico">🤖</div>
+        <div class="t">SAAS 执行并返回</div>
+        <div class="d">承接任务的 Agent 与模型执行任务，返回结果；使用数据回传平台，按实际消耗结算。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 3. SAAS 用户层 ===================== -->
+<section class="pp-section" id="saas">
+  <div class="pp-container-wide">
+    <div class="sec-eyebrow">SAAS</div>
+    <h2 class="tagline">用户层：人人可见，人人可用</h2>
+    <p class="tldr-caption" style="text-align:left; margin-top:0; max-width:none;">每个用户登录后可接入自己电脑上的不同 Agent 与对应模型；其他用户可以看到对方的<b>头像、职业、运行环境（Windows / macOS / Linux）、拥有的 Agent 与模型配置</b>。点击左侧用户查看详情：</p>
+    <div class="card-surface" style="margin-top:18px;">
+      <div class="saas-split">
+        <div class="saas-list">
+          <div class="lbl">在线用户 <span class="b">5</span></div>
+          <div class="user-row active" data-u="0">
+            <span class="av" style="background:#1a73e8;">张</span>
+            <div><div class="nm">张三</div><div class="jb">后端工程师 · Windows 11</div></div>
+          </div>
+          <div class="user-row" data-u="1">
+            <span class="av" style="background:#7C3AED;">李</span>
+            <div><div class="nm">李四</div><div class="jb">算法工程师 · macOS 14.5</div></div>
+          </div>
+          <div class="user-row" data-u="2">
+            <span class="av" style="background:#F59E0B;">王</span>
+            <div><div class="nm">王五</div><div class="jb">前端工程师 · macOS 14.4</div></div>
+          </div>
+          <div class="user-row" data-u="3">
+            <span class="av" style="background:#10B981;">赵</span>
+            <div><div class="nm">赵六</div><div class="jb">产品经理 · Windows 11</div></div>
+          </div>
+          <div class="user-row" data-u="4">
+            <span class="av" style="background:#06B6D4;">孙</span>
+            <div><div class="nm">孙七</div><div class="jb">大学生 · Linux Ubuntu 24.04</div></div>
+          </div>
+        </div>
+        <div class="saas-detail" id="userDetail"><!-- JS 渲染 --></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 4. 企业版 ===================== -->
+<section class="pp-section" id="enterprise">
+  <div class="pp-container-wide">
+    <div class="sec-eyebrow">Enterprise</div>
+    <h2 class="tagline">企业版：局域网内的 Agent 共享</h2>
+    <p class="tldr-caption" style="text-align:left; margin-top:0; max-width:920px;">在企业局域网内部署后，<b>数据不出内网</b>。A 员工可以看到 B 员工的职业、运行环境、支持的 Agent 与模型，并<b>直接互相调用</b>——不用重复部署，不用重复付费。</p>
+    <div class="agent-grid" style="grid-template-columns:repeat(3,1fr); margin-top:18px;">
+      <div class="agent-card">
+        <div class="ico">🔒</div>
+        <div class="nm">私有部署 · 数据不出内网</div>
+        <div class="ds">整套平台部署在企业局域网内，代码、文档、对话全部留在内网，满足合规与安全要求。</div>
+      </div>
+      <div class="agent-card">
+        <div class="ico">🔄</div>
+        <div class="nm">互相查看 · 互相调用</div>
+        <div class="ds">员工之间可见头像、职业、运行环境、Agent 与模型配置；可调用对方的 Agent 与模型服务，协作完成任务。</div>
+      </div>
+      <div class="agent-card">
+        <div class="ico">🛡</div>
+        <div class="nm">管理员五项管控</div>
+        <div class="ds">成员管理、权限管理、资源监控、计费管理、日志审计——企业级治理一应俱全。</div>
+      </div>
+    </div>
+    <div class="card-surface" style="margin-top:18px;">
+      <div class="subtitle" style="margin-top:0;">一次典型的企业协作</div>
+      <div class="flow2">
+        <div class="flow-box">
+          <div class="flow-icon">👨‍💻</div>
+          <div class="flow-title">A 员工（开发）</div>
+          <div class="flow-sub">需要为算法侧训练任务<br>生成数据管道代码</div>
+        </div>
+        <div class="flow-arrow"><span class="ar">→</span><span class="arlbl">发现 B 员工的<br>数据分析 Agent</span></div>
+        <div class="flow-box">
+          <div class="flow-icon">🔄</div>
+          <div class="flow-title">平台路由调用</div>
+          <div class="flow-sub">跨机器调用 B 的 Agent<br>与 Gemini-1.5 Pro</div>
+        </div>
+        <div class="flow-arrow"><span class="ar">→</span><span class="arlbl">结果返回<br>A 的 IDE</span></div>
+        <div class="flow-box accent">
+          <div class="flow-icon">✅</div>
+          <div class="flow-title">协作完成</div>
+          <div class="flow-sub">管理员后台可见<br>调用日志与费用</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 5. Agent 与模型市场 ===================== -->
+<section class="pp-section" id="agents">
+  <div class="pp-container-wide">
+    <div class="sec-eyebrow">Marketplace</div>
+    <h2 class="tagline">Agent 市场与模型矩阵</h2>
+    <p class="tldr-caption" style="text-align:left; margin-top:0; max-width:none;">无论是<b>普通用户</b>、<b>认证公司/企业</b>还是<b>博主服务方</b>，都可以把自己部署的 Agent 上架到市场，按调用计费——<b>不用学习 AI、不用包月 token，完成一个任务付一次钱</b>。</p>
+    <div class="agent-grid" style="margin-top:18px;">
+      <div class="agent-card">
+        <div class="ico">🧑‍💻</div>
+        <div class="nm">代码助手 Agent</div>
+        <div class="ds">阅读仓库上下文，生成、审查、重构代码，支持多语言。</div>
+        <span class="tg">¥2.1/千token</span>
+      </div>
+      <div class="agent-card">
+        <div class="ico">🧪</div>
+        <div class="nm">测试生成 Agent</div>
+        <div class="ds">根据函数签名与边界条件自动生成单元测试与回归用例。</div>
+        <span class="tg">¥1.8/千token</span>
+      </div>
+      <div class="agent-card">
+        <div class="ico">📄</div>
+        <div class="nm">文档生成 Agent</div>
+        <div class="ds">从代码与提交历史中提取 API 文档、变更日志与使用指南。</div>
+        <span class="tg">¥1.5/千token</span>
+      </div>
+      <div class="agent-card">
+        <div class="ico">📊</div>
+        <div class="nm">数据分析 Agent</div>
+        <div class="ds">连接数据源，自动清洗、统计、可视化并输出结论报告。</div>
+        <span class="tg">¥2.5/千token</span>
+      </div>
+      <div class="agent-card">
+        <div class="ico">🏋️</div>
+        <div class="nm">模型训练 Agent</div>
+        <div class="ds">微调流水线编排：数据准备、LoRA 训练、评估、导出。</div>
+        <span class="tg">时薪 ¥120/h</span>
+      </div>
+      <div class="agent-card">
+        <div class="ico">🎨</div>
+        <div class="nm">UI 审查 Agent</div>
+        <div class="ds">截图对比设计稿，输出像素级差异与可访问性建议。</div>
+        <span class="tg">¥1.9/千token</span>
+      </div>
+      <div class="agent-card">
+        <div class="ico">📝</div>
+        <div class="nm">PRD 生成 Agent</div>
+        <div class="ds">把口述需求整理成结构化 PRD、用户故事与验收标准。</div>
+        <span class="tg">¥1.6/千token</span>
+      </div>
+      <div class="agent-card">
+        <div class="ico">🎓</div>
+        <div class="nm">作业助手 Agent</div>
+        <div class="ds">解题思路讲解、论文润色、代码作业批注，拒绝直接抄答案。</div>
+        <span class="tg">¥0.9/千token</span>
+      </div>
+    </div>
+    <div class="table-head" style="margin-top:26px;">支持的模型 <span class="th-note">（用户自选接入，按各自费率计费）</span></div>
+    <div class="model-cloud">
+      <span class="m t">GPT-4o <span class="v">OpenAI</span></span>
+      <span class="m t">Claude-3.5 <span class="v">Anthropic</span></span>
+      <span class="m t">Gemini-1.5 Pro <span class="v">Google</span></span>
+      <span class="m">Qwen-2.5-72B <span class="v">Alibaba</span></span>
+      <span class="m">CodeLlama-34B <span class="v">Meta</span></span>
+      <span class="m">Llama-3.1-70B <span class="v">Meta</span></span>
+      <span class="m">DeepSeek-V3 <span class="v">DeepSeek</span></span>
+      <span class="m">GLM-4 <span class="v">Zhipu</span></span>
+      <span class="m">本地开源模型 <span class="v">self-hosted</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 6. 适用人群 ===================== -->
+<section class="pp-section" id="usecases">
+  <div class="pp-container-wide">
+    <div class="sec-eyebrow">For Whom</div>
+    <h2 class="tagline">为谁解决什么问题</h2>
+    <div class="role-grid" style="margin-top:18px;">
+      <div class="role-card">
+        <div class="emoji">🙋</div>
+        <div class="nm">普通用户</div>
+        <div class="ds">只是有一个简单任务，想得到一个不错的结果——不想学 AI，不想部署，也不想为以月为单位的 token 开销买单。</div>
+        <ul>
+          <li>按次付费，完成一个任务付一次钱</li>
+          <li>打包上下文 + 预期结果，一键提交</li>
+          <li>预算先估、余额透明，无隐藏消费</li>
+        </ul>
+      </div>
+      <div class="role-card">
+        <div class="emoji">👨‍🔧</div>
+        <div class="nm">程序员 / 博主（服务方）</div>
+        <div class="ds">本地已有 Agent 或想搭建云端 Agent 服务的人，希望用业余时间寻找一份副业。</div>
+        <ul>
+          <li>上架自己的 Agent 到市场，按调用计费</li>
+          <li>平台负责路由、结算、监控，专注能力本身</li>
+          <li>时薪 + token 双轨定价，收入透明</li>
+        </ul>
+      </div>
+      <div class="role-card">
+        <div class="emoji">🏢</div>
+        <div class="nm">企业 / 认证公司</div>
+        <div class="ds">团队里每个员工有自己的运行环境与工具链，希望 Agent 能力在内部流转而不外泄。</div>
+        <ul>
+          <li>局域网私有部署，数据不出内网</li>
+          <li>员工之间互相查看、互相调用</li>
+          <li>管理员统一治理：权限 / 资源 / 计费 / 审计</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 7. 动态交易流程演示 ===================== -->
+<section class="pp-section" id="demo">
+  <div class="pp-container-wide">
+    <div class="sec-eyebrow">Live Demo</div>
+    <h2 class="tagline">一次交易的全链路</h2>
+    <p class="tldr-caption" style="text-align:left; margin-top:0; max-width:none;">点击下方任意节点逐步查看流程，也可按 <b>自动播放</b> 体验完整链路。从客户端打包上下文到 SAAS 返回结果，每一步都把数据流的细节可视化。</p>
+    <div class="demo-wrap" style="margin-top:18px;">
+      <div class="demo-stepper" id="demoStepper">
+        <div class="demo-step current" data-s="1"><div class="num-circle"><span>1</span></div><span class="ico">📦</span><div class="label">打包上下文</div></div>
+        <div class="demo-step" data-s="2"><div class="num-circle"><span>2</span></div><span class="ico">🧮</span><div class="label">预算计算</div></div>
+        <div class="demo-step" data-s="3"><div class="num-circle"><span>3</span></div><span class="ico">💳</span><div class="label">充值支付</div></div>
+        <div class="demo-step" data-s="4"><div class="num-circle"><span>4</span></div><span class="ico">🔀</span><div class="label">平台路由</div></div>
+        <div class="demo-step" data-s="5"><div class="num-circle"><span>5</span></div><span class="ico">🤖</span><div class="label">SAAS 执行</div></div>
+        <div class="demo-step" data-s="6"><div class="num-circle"><span>6</span></div><span class="ico">✅</span><div class="label">返回结果</div></div>
+      </div>
+
+      <div class="demo-stage" id="demoStage"><!-- JS 渲染 --></div>
+
+      <div class="demo-controls">
+        <button class="btn" id="demoPrev">← 上一步</button>
+        <button class="btn primary" id="demoAuto">▶ 自动播放</button>
+        <button class="btn" id="demoNext">下一步 →</button>
+        <button class="btn" id="demoReset">↺ 重置</button>
+        <div class="progress">步骤 <b id="demoIdx">1</b> / 6</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 8. 定价 ===================== -->
+<section class="pp-section" id="pricing">
+  <div class="pp-container-wide">
+    <div class="sec-eyebrow">Pricing</div>
+    <h2 class="tagline">接入方式</h2>
+    <div class="pricing-grid" style="margin-top:18px;">
+      <div class="pricing-card basic">
+        <div class="card-body">
+          <div class="tier-row">
+            <div class="tier">个人用户</div>
+            <span class="tier-tag">基础</span>
+          </div>
+          <div class="desc">按任务付费，零门槛</div>
+          <div class="price"><span class="num">¥0</span><span class="unit">起步 · 按量结算</span></div>
+          <ul>
+            <li>注册即用，无需部署任何环境</li>
+            <li>预估 token × 时薪，先估后付</li>
+            <li>支付宝 / 微信充值，余额实时可查</li>
+            <li>任务结果不满意可申请仲裁退款</li>
+          </ul>
+          <div class="cta-row"><a class="cta outline-red" href="#top">免费注册</a></div>
+        </div>
+      </div>
+      <div class="pricing-card featured">
+        <span class="badge">POPULAR</span>
+        <div class="card-body">
+          <div class="tier-row">
+            <div class="tier">服务提供方</div>
+            <span class="tier-tag">推荐</span>
+          </div>
+          <div class="desc">上架 Agent，赚取副业收入</div>
+          <div class="price"><span class="num">15%</span><span class="unit">平台服务费</span></div>
+          <ul>
+            <li>本地 Agent / 云端 Agent 均可上架</li>
+            <li>自选模型矩阵与费率（token 或时薪）</li>
+            <li>平台负责路由、计费、结算、监控</li>
+            <li>个人博主与认证服务商均可入驻</li>
+          </ul>
+          <div class="cta-row"><a class="cta primary" href="#top">申请入驻</a></div>
+        </div>
+      </div>
+      <div class="pricing-card enterprise">
+        <div class="card-body">
+          <div class="tier-row">
+            <div class="tier">企业版</div>
+            <span class="tier-tag">企业</span>
+          </div>
+          <div class="desc">局域网私有部署</div>
+          <div class="price"><span class="num">定制</span><span class="unit">按席位 / 年</span></div>
+          <ul>
+            <li>完整平台私有化部署，数据不出内网</li>
+            <li>员工互相查看与调用对方 Agent</li>
+            <li>成员 / 权限 / 资源 / 计费 / 审计五项管控</li>
+            <li>专属客户成功经理与 SLA 保障</li>
+          </ul>
+          <div class="cta-row"><a class="cta dark" href="#top">联系销售</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Footer ===================== -->
+<footer class="footer" style="padding:2.5rem 1.5rem; border-top:1px solid var(--border);">
+  <div class="pp-container-wide" style="text-align:center;">
+    <p style="font-size:.9em; margin:0 0 .6rem;">
+      <a href="#overview" style="color:var(--brand); text-decoration:none;">架构</a> ·
+      <a href="#saas" style="color:var(--brand); text-decoration:none;">SAAS</a> ·
+      <a href="#enterprise" style="color:var(--brand); text-decoration:none;">企业版</a> ·
+      <a href="#agents" style="color:var(--brand); text-decoration:none;">Agent 市场</a> ·
+      <a href="#pricing" style="color:var(--brand); text-decoration:none;">定价</a>
+    </p>
+    <p style="font-size:.8em; color:#999; margin:0;">
+      Resolve · UI 基于 <a href="#" style="color:inherit; text-decoration:underline;">academic-project-page-ui</a> 设计系统构建
+    </p>
+  </div>
+</footer>
+
+<script>
+/* ================= SAAS 用户详情交互 ================= */
+(function () {
+  'use strict';
+  var USERS = [
+    {
+      name: '张三', job: '后端工程师', os: 'Windows 11', osCls: 'win', color: '#1a73e8',
+      agents: ['代码助手 Agent', '测试生成 Agent', '文档生成 Agent'],
+      models: [
+        { n: 'GPT-4o', p: '¥2.1/千token' },
+        { n: 'Claude-3.5', p: '¥2.4/千token' },
+        { n: 'CodeLlama-34B', p: '本地部署' }
+      ]
+    },
+    {
+      name: '李四', job: '算法工程师', os: 'macOS 14.5', osCls: 'mac', color: '#7C3AED',
+      agents: ['数据分析 Agent', '模型训练 Agent'],
+      models: [
+        { n: 'Gemini-1.5 Pro', p: '¥1.9/千token' },
+        { n: 'Claude-3.5', p: '¥2.4/千token' },
+        { n: 'Qwen-2.5-72B', p: '本地部署' }
+      ]
+    },
+    {
+      name: '王五', job: '前端工程师', os: 'macOS 14.4', osCls: 'mac', color: '#F59E0B',
+      agents: ['组件生成 Agent', 'UI 审查 Agent', 'CSS 优化 Agent'],
+      models: [
+        { n: 'GPT-4o', p: '¥2.1/千token' },
+        { n: 'Gemini-1.5 Pro', p: '¥1.9/千token' },
+        { n: 'Claude-3.5', p: '¥2.4/千token' }
+      ]
+    },
+    {
+      name: '赵六', job: '产品经理', os: 'Windows 11', osCls: 'win', color: '#10B981',
+      agents: ['PRD 生成 Agent', '数据分析 Agent'],
+      models: [
+        { n: 'Claude-3.5', p: '¥2.4/千token' },
+        { n: 'GPT-4o', p: '¥2.1/千token' }
+      ]
+    },
+    {
+      name: '孙七', job: '大学生', os: 'Linux Ubuntu 24.04', osCls: 'linux', color: '#06B6D4',
+      agents: ['作业助手 Agent'],
+      models: [
+        { n: 'Qwen-2.5-72B', p: '本地部署' },
+        { n: 'Gemini-1.5 Pro', p: '¥1.9/千token' }
+      ]
+    }
+  ];
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  function render(u) {
+    var pills = u.agents.map(function (a) {
+      return '<span class="pill ' + u.osCls + '">' + esc(a) + '</span>';
+    }).join('');
+    var models = u.models.map(function (m) {
+      return '<div class="m"><span class="n">' + esc(m.n) + '</span><span class="p">' + esc(m.p) + '</span></div>';
+    }).join('');
+    return '' +
+      '<div class="head">' +
+        '<span class="av" style="background:' + u.color + ';">' + esc(u.name.charAt(0)) + '</span>' +
+        '<div class="meta">' +
+          '<div class="nm">' + esc(u.name) + '</div>' +
+          '<div class="jb">' + esc(u.job) + '</div>' +
+          '<span class="os">🖥 ' + esc(u.os) + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="row">' +
+        '<div><div class="ttl">拥有的 Agent</div><div class="pillrow">' + pills + '</div></div>' +
+        '<div><div class="ttl">模型配置与收费</div><div class="models">' + models + '</div></div>' +
+      '</div>';
+  }
+
+  var detail = document.getElementById('userDetail');
+  if (detail) detail.innerHTML = render(USERS[0]);
+
+  document.querySelectorAll('.user-row').forEach(function (row) {
+    row.addEventListener('click', function () {
+      document.querySelectorAll('.user-row').forEach(function (r) { r.classList.remove('active'); });
+      row.classList.add('active');
+      var u = USERS[+row.getAttribute('data-u')];
+      if (u && detail) detail.innerHTML = render(u);
+    });
+  });
+})();
+</script>
+
+<script>
+/* ================= 动态交易流程演示 ================= */
+(function () {
+  'use strict';
+
+  function s1() {
+    return '' +
+      '<div class="col">' +
+        '<div class="ttl">客户端打包上下文 <span class="live-tag">STEP 1</span></div>' +
+        '<div class="sub">用户在自己电脑上把任务描述、原始数据、期望产出一起打包，通过 IDE 插件或 CLI 提交请求。</div>' +
+        '<div class="editor-mock"><span class="ln">1</span><span class="cm"># 任务：分析 sales_2026.csv 并输出月度趋势报告</span><br>' +
+          '<span class="ln">2</span><span class="kw">import</span> pandas <span class="kw">as</span> pd<br>' +
+          '<span class="ln">3</span><span class="kw">from</span> resolve <span class="kw">import</span> submit<br>' +
+          '<span class="ln">4</span><br>' +
+          '<span class="ln">5</span><span class="hl">df = pd.read_csv(<span class="st">"sales_2026.csv"</span>)</span><br>' +
+          '<span class="ln">6</span><span class="hl">submit(task=<span class="st">"monthly_trend_report"</span>,</span><br>' +
+          '<span class="ln">7</span><span class="hl">        input=df,</span><br>' +
+          '<span class="ln">8</span><span class="hl">        expect=<span class="st">"md + chart.png"</span>)</span></div>' +
+      '</div>' +
+      '<div class="col">' +
+        '<div class="ttl">预期结果</div>' +
+        '<div class="sub">明确期望产出格式、约束条件、衡量标准——让 Agent 能有目标地工作。</div>' +
+        '<div class="demo-panel"><span class="k">format</span>: markdown + PNG chart<br>' +
+          '<span class="k">length</span>: 800 ~ 1500 字<br>' +
+          '<span class="k">must_include</span>: 月度销售额 / 同比 / 环比 / 异常标注<br>' +
+          '<span class="k">deadline</span>: 5 分钟内<br>' +
+          '<span class="s">accept_criteria</span>: 数值精度 ±0.5%、图表中文标签清晰</div>' +
+      '</div>';
+  }
+
+  function s2() {
+    return '' +
+      '<div class="col">' +
+        '<div class="ttl">预算明细 <span class="live-tag">STEP 2</span></div>' +
+        '<div class="sub">平台按预估 token 消耗量 × 执行人员时薪自动核算预算，用户确认后即可支付。</div>' +
+        '<div class="budget-row"><span class="l">输入 token</span><span class="v">12,400</span></div>' +
+        '<div class="budget-row"><span class="l">输出 token</span><span class="v">3,800</span></div>' +
+        '<div class="budget-row"><span class="l">单 token 价</span><span class="v">¥0.0021</span></div>' +
+        '<div class="budget-row"><span class="l">服务方时薪</span><span class="v">¥60.00</span></div>' +
+        '<div class="budget-row"><span class="l">预估耗时</span><span class="v">4.5 min</span></div>' +
+      '</div>' +
+      '<div class="col">' +
+        '<div class="ttl">总预算</div>' +
+        '<div class="sub">点击"充值支付"即从账户余额预扣；任务完成后多退少补。</div>' +
+        '<div class="budget-total"><span>合计预扣</span><span class="t">¥8.64</span></div>' +
+        '<div class="demo-panel" style="margin-top:14px;">' +
+          '<span class="k">token_cost</span>: 16,200 × ¥0.0021 = <span class="w">¥4.20</span><br>' +
+          '<span class="k">time_cost</span>: 0.075h × ¥60 = <span class="w">¥4.50</span><br>' +
+          '<span class="k">platform_fee</span>: 15% × ¥8.70 ≈ <span class="w">-¥0.06</span><br>' +
+          '<span class="s">total</span>: <b>¥8.64</b></div>' +
+      '</div>';
+  }
+
+  function s3() {
+    return '' +
+      '<div class="col">' +
+        '<div class="ttl">充值支付 <span class="live-tag">STEP 3</span></div>' +
+        '<div class="sub">通过支付宝或微信预付款到平台账户；钱包余额实时可见，任务结束后按实际消耗结算。</div>' +
+        '<div class="pay-mock">' +
+          '<div class="pay-ico">💚</div>' +
+          '<div class="pay-lbl">微信支付 · 充值到 Resolve 钱包</div>' +
+          '<div class="pay-amt">¥8.64</div>' +
+          '<div class="pay-status">支付成功 · 商户号 1234567890</div>' +
+        '</div>' +
+        '<div class="pay-stream"><span>钱包余额变动</span><span class="ok">-¥8.64</span></div>' +
+      '</div>' +
+      '<div class="col">' +
+        '<div class="ttl">余额流水</div>' +
+        '<div class="sub">所有消费可追溯、可申诉、可仲裁，平台不沉淀资金。</div>' +
+        '<div class="demo-panel"><span class="ts">09:21:03</span> <span class="k">[充值]</span> 微信 → Resolve ¥8.64 <span class="s">OK</span><br>' +
+          '<span class="ts">09:21:04</span> <span class="k">[预扣]</span> 任务 #T-8921 ¥8.64 <span class="s">LOCKED</span><br>' +
+          '<span class="ts">09:21:04</span> <span class="k">[路由]</span> 分发到 SAAS-bj-02 <span class="s">OK</span><br>' +
+          '<span class="ts">09:24:51</span> <span class="k">[结算]</span> 实付 ¥7.92 / 退款 ¥0.72 <span class="s">DONE</span><br>' +
+          '<span class="ts">09:24:51</span> <span class="k">[钱包]</span> 当前余额 ¥128.46</div>' +
+      '</div>';
+  }
+
+  function s4() {
+    return '' +
+      '<div class="col">' +
+        '<div class="ttl">平台路由 <span class="live-tag">STEP 4</span></div>' +
+        '<div class="sub">根据任务类型、预算、地理就近原则，路由到合适的 SAAS 实例；负载最低者优先。</div>' +
+        '<div class="route-mini">' +
+          '<div class="node"><span class="t">客户端</span>9.21.03</div>' +
+          '<div class="node"><span class="t">平台</span>路由层</div>' +
+          '<div class="node hit"><span class="t">SAAS</span>bj-02</div>' +
+          '<div class="node"><span class="t">结果</span>返 回</div>' +
+        '</div>' +
+        '<div class="route-arrow">↓</div>' +
+        '<div class="route-mini">' +
+          '<div class="node"><span class="t">bj-01</span>负载 78%</div>' +
+          '<div class="node"><span class="t">bj-02</span>负载 31%</div>' +
+          '<div class="node"><span class="t">sh-01</span>负载 62%</div>' +
+          '<div class="node"><span class="t">sz-01</span>负载 45%</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="col">' +
+        '<div class="ttl">路由策略</div>' +
+        '<div class="sub">匹配最佳执行者后立即派发，并锁定预算；任务结束或超时自动释放。</div>' +
+        '<div class="demo-panel"><span class="k">task_type</span>: data-analysis<br>' +
+          '<span class="k">required_skill</span>: pandas + matplotlib<br>' +
+          '<span class="k">latency_prefer</span>: <span class="s">low</span><br>' +
+          '<span class="k">selected_node</span>: bj-02 (李四 · 负载 31%)<br>' +
+          '<span class="k">locked_budget</span>: ¥8.64<br>' +
+          '<span class="k">timeout</span>: 5 min · <span class="w">⏱</span></div>' +
+      '</div>';
+  }
+
+  function s5() {
+    return '' +
+      '<div class="col">' +
+        '<div class="ttl">SAAS 执行 <span class="live-tag">STEP 5</span></div>' +
+        '<div class="sub">被分派的 SAAS 实例（这里是 bj-02 的李四）调用其本地 Agent 执行任务，全程日志可审计。</div>' +
+        '<div class="agent-log"><span class="ts">09:21:05</span> <span class="run">[agent]</span> 数据分析 Agent 启动 v3.2.1<br>' +
+          '<span class="ts">09:21:06</span> <span class="run">[load]</span> sales_2026.csv 16,240 行<br>' +
+          '<span class="ts">09:21:07</span> <span class="run">[pre]</span> 字段对齐 · 16 异常行已过滤<br>' +
+          '<span class="ts">09:21:09</span> <span class="run">[plan]</span> 计算月度聚合 + 同比/环比<br>' +
+          '<span class="ts">09:21:14</span> <span class="run">[llm]</span> Gemini-1.5 Pro 综述 4.2k token<br>' +
+          '<span class="ts">09:21:28</span> <span class="run">[chart]</span> 渲染 trend.png 1240×680<br>' +
+          '<span class="ts">09:21:33</span> <span class="run">[llm]</span> Claude-3.5 撰写 markdown 1.8k token<br>' +
+          '<span class="ts">09:24:48</span> <span class="run">[done]</span> <span class="ok">输出完成 · 总计 16.4k token</span><br>' +
+          '<span class="ts">09:24:49</span> <span class="run">[log]</span> <span class="tok">真实消耗 ¥7.92 · 节省 ¥0.72</span></div>' +
+      '</div>' +
+      '<div class="col">' +
+        '<div class="ttl">资源占用</div>' +
+        '<div class="sub">执行方使用的模型、Agent、token 都按实际消耗计费，节省部分自动退还用户钱包。</div>' +
+        '<div class="demo-panel"><span class="k">model</span>: Gemini-1.5 Pro (综述)<br>' +
+          '<span class="k">model</span>: Claude-3.5 (撰写)<br>' +
+          '<span class="k">agent</span>: 数据分析 Agent v3.2.1<br>' +
+          '<span class="k">input_token</span>: 12,180<br>' +
+          '<span class="k">output_token</span>: 4,220<br>' +
+          '<span class="k">actual_cost</span>: <span class="s">¥7.92</span><br>' +
+          '<span class="k">refund</span>: <span class="s">¥0.72</span></div>' +
+      '</div>';
+  }
+
+  function s6() {
+    return '' +
+      '<div class="col">' +
+        '<div class="ttl">结果返回 <span class="live-tag">STEP 6</span></div>' +
+        '<div class="sub">任务产出直接下载到本地 IDE；平台出具消费账单与模型调用凭证，全程可申诉。</div>' +
+        '<div class="result-card">' +
+          '<div class="res-head">✅ 任务 #T-8921 已完成</div>' +
+          '<div class="res-body">📊 sales_2026 月度趋势报告\n\n• 1-6 月累计销售 ¥1.84M，同比增长 +18.2%\n• 3 月异常高峰 +¥420k（华北家电节）\n• 5-6 月环比下滑 -4.7%，建议关注\n\n📎 附件：trend.png · report.md · data.parquet</div>' +
+          '<div class="res-meta"><span>耗时 <b>3m 45s</b></span><span>消耗 <b>¥7.92</b></span><span>节省 <b>¥0.72</b></span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="col">' +
+        '<div class="ttl">账单与凭证</div>' +
+        '<div class="sub">下载完整账单或对争议发起仲裁——平台 7×24 处理申诉，平均响应 12 分钟。</div>' +
+        '<div class="demo-panel"><span class="ts">任务 #T-8921</span> <span class="s">已完成</span><br>' +
+          '<span class="k">预扣</span>: ¥8.64  →  <span class="k">实付</span>: ¥7.92<br>' +
+          '<span class="k">退款</span>: ¥0.72 已退回钱包<br>' +
+          '<span class="k">服务方</span>: 李四 · bj-02<br>' +
+          '<span class="k">服务评分</span>: 5.0 / 5.0<br>' +
+          '<span class="k">下载凭证</span>: <span class="s">📄 invoice.pdf</span><br>' +
+          '<span class="k">模型调用明细</span>: <span class="s">📄 llm-audit.json</span></div>' +
+      '</div>';
+  }
+
+  var STEPS = [s1, s2, s3, s4, s5, s6];
+  var stage = document.getElementById('demoStage');
+  var stepperEl = document.getElementById('demoStepper');
+  var idxEl = document.getElementById('demoIdx');
+  var prevBtn = document.getElementById('demoPrev');
+  var nextBtn = document.getElementById('demoNext');
+  var autoBtn = document.getElementById('demoAuto');
+  var resetBtn = document.getElementById('demoReset');
+  var stepEls = stepperEl.querySelectorAll('.demo-step');
+
+  var current = 0, playing = false, timer = null;
+
+  function render(i) {
+    current = Math.max(0, Math.min(STEPS.length - 1, i));
+    stage.innerHTML = STEPS[current]();
+    idxEl.textContent = current + 1;
+    stepEls.forEach(function (el, idx) {
+      el.classList.remove('current', 'done');
+      if (idx < current) el.classList.add('done');
+      else if (idx === current) el.classList.add('current');
+    });
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === STEPS.length - 1;
+  }
+
+  function play() {
+    playing = true; autoBtn.innerHTML = '⏸ 暂停';
+    if (current >= STEPS.length - 1) { current = -1; render(current + 1); }
+    timer = setInterval(function () {
+      if (current >= STEPS.length - 1) { stop(); return; }
+      render(current + 1);
+    }, 2400);
+  }
+  function stop() {
+    if (timer) { clearInterval(timer); timer = null; }
+    playing = false; autoBtn.innerHTML = '▶ 自动播放';
+  }
+
+  prevBtn.addEventListener('click', function () { stop(); if (current > 0) render(current - 1); });
+  nextBtn.addEventListener('click', function () { stop(); if (current < STEPS.length - 1) render(current + 1); });
+  resetBtn.addEventListener('click', function () { stop(); render(0); });
+  autoBtn.addEventListener('click', function () { if (playing) stop(); else play(); });
+  stepEls.forEach(function (el) {
+    el.addEventListener('click', function () {
+      stop();
+      render(+el.getAttribute('data-s') - 1);
+    });
+  });
+
+  render(0);
+})();
+</script>
+
+</body>
+</html>

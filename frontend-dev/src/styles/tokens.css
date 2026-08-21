@@ -1,0 +1,114 @@
+/* ==========================================================================
+   Resolve App · Design Tokens
+   由营销页 static/css/theme.css 提炼扩展；风格：iOS + 语雀（干净、克制、留白）
+   品牌主色沿用深蓝 #1a73e8
+   ========================================================================== */
+:root {
+  /* ---- Brand ---- */
+  --brand: #1a73e8;
+  --brand-hover: #1565c0;
+  --brand-active: #0f4fa8;
+  --brand-soft: rgba(26, 115, 232, 0.08);
+  --brand-softer: rgba(26, 115, 232, 0.05);
+  --brand-line: rgba(26, 115, 232, 0.22);
+  --brand-grad: linear-gradient(135deg, #1565c0 0%, #4a90e2 100%);
+
+  /* ---- 模块色（沿用架构图配色） ---- */
+  --c-client: #3b82f6;
+  --c-pay: #10b981;
+  --c-platform: #7c3aed;
+  --c-saas: #1a73e8;
+  --c-enterprise: #06b6d4;
+
+  /* ---- 语义色 ---- */
+  --success: #10b981;
+  --success-soft: rgba(16, 185, 129, 0.10);
+  --success-line: rgba(16, 185, 129, 0.28);
+  --danger: #ef4444;
+  --danger-soft: rgba(239, 68, 68, 0.10);
+  --danger-line: rgba(239, 68, 68, 0.26);
+  --warn: #f59e0b;
+  --warn-soft: rgba(245, 158, 11, 0.12);
+  --warn-line: rgba(245, 158, 11, 0.30);
+
+  /* ---- 环境色（Windows / macOS / Linux） ---- */
+  --os-win: #0078d4;
+  --os-win-soft: #eff6ff;
+  --os-win-line: #bfdbfe;
+  --os-mac: #6d28d9;
+  --os-mac-soft: #f5f3ff;
+  --os-mac-line: #ddd6fe;
+  --os-linux: #b45309;
+  --os-linux-soft: #fef3c7;
+  --os-linux-line: #fde68a;
+
+  /* ---- 文本 ---- */
+  --text-strong: #16181d;
+  --text-body: #3f3f46;
+  --text-mid: #5f5f66;
+  --text-weak: #8a8a92;
+  --text-faint: #adadb5;
+  --text-on-brand: #ffffff;
+
+  /* ---- 表面 ---- */
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --surface-soft: #f7f8fa;
+  --surface-hover: #f1f3f5;
+  --surface-sunken: #eceef1;
+  --surface-code: #0f1115;
+  --sidebar-bg: #fbfbfc;
+  --overlay: rgba(17, 24, 39, 0.42);
+
+  /* ---- 边框 ---- */
+  --border: rgba(17, 24, 39, 0.08);
+  --border-strong: rgba(17, 24, 39, 0.13);
+  --border-faint: rgba(17, 24, 39, 0.045);
+
+  /* ---- 圆角 ---- */
+  --r-xs: 6px;
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 18px;
+  --r-2xl: 22px;
+  --r-pill: 999px;
+
+  /* ---- 阴影 ---- */
+  --sh-1: 0 1px 2px rgba(17, 24, 39, 0.04), 0 1px 3px rgba(17, 24, 39, 0.05);
+  --sh-2: 0 4px 12px rgba(17, 24, 39, 0.06), 0 2px 4px rgba(17, 24, 39, 0.04);
+  --sh-3: 0 12px 32px rgba(17, 24, 39, 0.10), 0 4px 10px rgba(17, 24, 39, 0.05);
+  --sh-brand: 0 8px 24px rgba(26, 115, 232, 0.28);
+  --sh-pop: 0 10px 30px rgba(17, 24, 39, 0.14);
+
+  /* ---- 字体 ---- */
+  --font-display: 'Space Grotesk', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Fira Code', ui-monospace, Menlo, Consolas, monospace;
+
+  /* ---- 布局尺寸 ---- */
+  --sidebar-w: 236px;
+  --topbar-h: 56px;
+  --tabbar-h: 60px;
+  --page-max: 1180px;
+  --page-pad: 28px;
+
+  /* ---- 动效 ---- */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur: 0.22s;
+
+  /* ---- 热力图（品牌蓝 5 档） ---- */
+  --heat-l0: #ebedf0;
+  --heat-l1: #c9dcfa;
+  --heat-l2: #8fb9f0;
+  --heat-l3: #4f8ee8;
+  --heat-l4: #1a73e8;
+
+  /* ---- 层级 ---- */
+  --z-nav: 40;
+  --z-dropdown: 50;
+  --z-sheet: 60;
+  --z-modal: 70;
+  --z-toast: 90;
+}

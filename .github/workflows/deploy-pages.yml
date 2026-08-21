@@ -1,0 +1,43 @@
+# =============================================================================
+# Deploy GitHub Pages — 发布 frontend-preview 静态版控制台
+# 站点根 = frontend-preview 目录，URL: https://<user>.github.io/resolve/
+# 仓库其余内容（README / 落地页 / frontend-dev）不进 Pages。
+# =============================================================================
+name: Deploy frontend-preview to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Upload artifact (frontend-preview)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend-preview
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
