@@ -6,6 +6,7 @@ window.ResolveRouter = (function () {
   var routes = {};
   var guard = null;   /* function(path) -> true 放行 / false 拦截 */
   var current = null;
+  var T = function (k) { return window.ResolveI18N ? window.ResolveI18N.T(k) : k; };
 
   function register(path, def) { routes[path] = def; }
   function nav(path) {
@@ -25,7 +26,7 @@ window.ResolveRouter = (function () {
     var def = routes[path] || routes['/'];
     if (!def) { nav('/'); return; }
     current = def;
-    document.title = def.title ? def.title + ' · Resolve' : 'Resolve · 控制台';
+    document.title = def.title ? T(def.title) + ' · Resolve' : T('Resolve · 控制台');
     def.render(path);
     var view = document.getElementById('view');
     if (view) view.scrollTop = 0;

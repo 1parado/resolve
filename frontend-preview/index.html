@@ -29,22 +29,22 @@
 
     <nav class="nav" aria-label="主导航">
       <a class="nav-item" href="#/" data-nav="profile">
-        <span class="nav-ico">__ICON__</span><span class="nav-lbl">个人主页</span>
+        <span class="nav-ico">__ICON__</span><span class="nav-lbl" data-i18n="个人主页">个人主页</span>
       </a>
       <a class="nav-item" href="#/marketplace" data-nav="marketplace">
-        <span class="nav-ico">__ICON__</span><span class="nav-lbl">Agent 市场</span>
+        <span class="nav-ico">__ICON__</span><span class="nav-lbl" data-i18n="Agent 市场">Agent 市场</span>
       </a>
       <a class="nav-item" href="#/connect" data-nav="connect">
-        <span class="nav-ico">__ICON__</span><span class="nav-lbl">接入</span>
+        <span class="nav-ico">__ICON__</span><span class="nav-lbl" data-i18n="接入">接入</span>
       </a>
       <a class="nav-item" href="#/wallet" data-nav="wallet">
-        <span class="nav-ico">__ICON__</span><span class="nav-lbl">钱包</span>
+        <span class="nav-ico">__ICON__</span><span class="nav-lbl" data-i18n="钱包">钱包</span>
       </a>
       <a class="nav-item" href="#/enterprise" data-nav="enterprise">
-        <span class="nav-ico">__ICON__</span><span class="nav-lbl">企业版</span>
+        <span class="nav-ico">__ICON__</span><span class="nav-lbl" data-i18n="企业版">企业版</span>
       </a>
       <a class="nav-item nav-ext" href="https://github.com/1parado/resolve" target="_blank" rel="noopener" data-nav="github">
-        <span class="nav-ico"></span><span class="nav-lbl">GitHub</span>
+        <span class="nav-ico"></span><span class="nav-lbl" data-i18n="GitHub">GitHub</span>
       </a>
     </nav>
 
@@ -59,6 +59,7 @@
       <button class="icon-btn top-menu" id="topMenuBtn" aria-label="打开导航菜单">__ICON__</button>
       <div class="top-title" id="topTitle">个人主页</div>
       <div class="top-actions">
+        <button class="icon-btn" id="langBtn" aria-label="语言">__ICON__</button>
         <a class="chip chip-balance" href="#/wallet">
           <span class="chip-ico">__ICON__</span>
           <span id="topBalance">¥0.00</span>
@@ -74,19 +75,19 @@
   <!-- 移动端底部 Tab 栏 -->
   <nav class="tabbar" id="tabbar" aria-label="移动端导航">
     <a class="tab-item" href="#/" data-nav="profile">
-      <span class="tab-ico">__ICON__</span><span class="tab-lbl">主页</span>
+      <span class="tab-ico">__ICON__</span><span class="tab-lbl" data-i18n="主页">主页</span>
     </a>
     <a class="tab-item" href="#/marketplace" data-nav="marketplace">
-      <span class="tab-ico">__ICON__</span><span class="tab-lbl">市场</span>
+      <span class="tab-ico">__ICON__</span><span class="tab-lbl" data-i18n="市场">市场</span>
     </a>
     <a class="tab-item tab-cta" href="#/connect" data-nav="connect">
-      <span class="tab-ico">__ICON__</span><span class="tab-lbl">接入</span>
+      <span class="tab-ico">__ICON__</span><span class="tab-lbl" data-i18n="接入">接入</span>
     </a>
     <a class="tab-item" href="#/wallet" data-nav="wallet">
-      <span class="tab-ico">__ICON__</span><span class="tab-lbl">钱包</span>
+      <span class="tab-ico">__ICON__</span><span class="tab-lbl" data-i18n="钱包">钱包</span>
     </a>
     <a class="tab-item" href="#/enterprise" data-nav="enterprise">
-      <span class="tab-ico">__ICON__</span><span class="tab-lbl">企业</span>
+      <span class="tab-ico">__ICON__</span><span class="tab-lbl" data-i18n="企业">企业</span>
     </a>
   </nav>
 </div>
@@ -98,6 +99,8 @@
 <div id="modal-root"></div>
 <div id="toast-root" class="toast-wrap" aria-live="polite"></div>
 
+<script src="./static/js/core/i18n-en.js"></script>
+<script src="./static/js/core/i18n.js"></script>
 <script src="./static/js/core/icons.js"></script>
 <script src="./static/js/core/mock.js"></script>
 <script src="./static/js/core/ui.js"></script>

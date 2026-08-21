@@ -238,7 +238,7 @@ window.ResolveUI = (function () {
       '<div class="modal" role="dialog" aria-modal="true"' + (opts.title ? ' aria-label="' + esc(opts.title) + '"' : '') + '>' +
         (opts.title ? '<div class="modal-head"><div class="modal-titles"><div class="modal-title">' + esc(opts.title) + '</div>' +
           (opts.subtitle ? '<div class="modal-sub">' + esc(opts.subtitle) + '</div>' : '') + '</div>' +
-          '<button type="button" class="icon-btn modal-close" aria-label="关闭">' + I('x', 18) + '</button></div>' : '') +
+          '<button type="button" class="icon-btn modal-close" aria-label="' + (window.ResolveI18N ? window.ResolveI18N.T('关闭') : '关闭') + '">' + I('x', 18) + '</button></div>' : '') +
         '<div class="modal-body"></div>' +
         (opts.footer ? '<div class="modal-foot"></div>' : '') +
       '</div>';

@@ -4,7 +4,7 @@
 (function () {
   'use strict';
   var D = window.ResolveData, UI = window.ResolveUI, R = window.ResolveRouter;
-  var I = UI.I;
+  var I = UI.I, T = window.ResolveI18N.T, L = window.ResolveI18N;
 
   var shell = document.getElementById('app');
   var fullpage = document.getElementById('fullpage');
@@ -22,8 +22,14 @@
 
   /* ---------- 占位图标注入 ---------- */
   function injectIcons() {
+    document.getElementById('langBtn').innerHTML = I('globe', 18);
+    document.getElementById('langBtn').setAttribute('aria-label', T('语言'));
+    document.getElementById('langBtn').setAttribute('title', T('语言'));
     document.getElementById('topMenuBtn').innerHTML = I('list', 18);
+    document.getElementById('topMenuBtn').setAttribute('aria-label', T('打开导航菜单'));
     document.getElementById('bellBtn').innerHTML = I('bell', 18) + '<span class="dot-badge"></span>';
+    document.getElementById('bellBtn').setAttribute('aria-label', T('通知'));
+    document.getElementById('bellBtn').setAttribute('title', T('通知'));
     var chipIco = document.querySelector('.chip-ico');
     if (chipIco) chipIco.innerHTML = I('coins', 15);
     var navMap = { profile: 'user', marketplace: 'market', connect: 'plug', wallet: 'wallet', enterprise: 'building', github: 'github' };
@@ -43,7 +49,7 @@
     var btn = document.getElementById('sideCollapse');
     if (!btn) return;
     btn.querySelector('.sc-ico').innerHTML = I(collapsed ? 'chev-right' : 'chev-left', 16);
-    btn.querySelector('.sc-lbl').textContent = collapsed ? '展开侧边栏' : '收起侧边栏';
+    btn.querySelector('.sc-lbl').textContent = collapsed ? T('展开侧边栏') : T('收起侧边栏');
   }
   function setCollapsed(collapsed) {
     document.body.classList.toggle('sb-collapsed', collapsed);
@@ -61,7 +67,7 @@
     btn.type = 'button';
     btn.className = 'side-collapse';
     btn.id = 'sideCollapse';
-    btn.setAttribute('aria-label', '收起侧边栏');
+    btn.setAttribute('aria-label', T('收起侧边栏'));
     btn.innerHTML = '<span class="sc-ico"></span><span class="sc-lbl"></span>';
     btn.addEventListener('click', toggleSidebar);
     foot.appendChild(btn);
@@ -73,7 +79,7 @@
     var me = D.me();
     if (!me) { sideUser.innerHTML = ''; topAvatar.innerHTML = ''; return; }
     var ident = D.identicon(me.github || me.name, 120);
-    var prov = me.provider === 'github' ? 'GitHub 登录' : '邮箱登录';
+    var prov = me.provider === 'github' ? T('GitHub 登录') : T('邮箱登录');
 
     sideUser.innerHTML = '';
     sideUser.appendChild(UI.avatar({ name: me.github || me.name, src: ident, size: 34, color: me.color }));
@@ -81,7 +87,7 @@
     info.style.cssText = 'min-width:0;';
     info.innerHTML = '<div class="su-name">' + D.esc(me.name) + '</div><div class="su-meta">' + prov + '</div>';
     sideUser.appendChild(info);
-    var exit = UI.iconBtn('logout', { label: '退出登录', onClick: logout });
+    var exit = UI.iconBtn('logout', { label: T('退出登录'), onClick: logout });
     exit.classList.add('su-exit');
     exit.style.cssText = 'margin-left:auto; width:32px; height:32px;';
     sideUser.appendChild(exit);
@@ -90,10 +96,10 @@
     var dd = UI.dropdown({
       trigger: UI.avatar({ name: me.github || me.name, src: ident, size: 34, color: me.color }),
       items: [
-        { label: '个人主页', icon: 'user', onClick: function () { R.nav('/'); } },
-        { label: '我的钱包', icon: 'wallet', onClick: function () { R.nav('/wallet'); } },
-        { label: '企业版', icon: 'building', onClick: function () { R.nav('/enterprise'); } },
-        { label: '退出登录', icon: 'logout', danger: true, onClick: logout }
+        { label: T('个人主页'), icon: 'user', onClick: function () { R.nav('/'); } },
+        { label: T('我的钱包'), icon: 'wallet', onClick: function () { R.nav('/wallet'); } },
+        { label: T('企业版'), icon: 'building', onClick: function () { R.nav('/enterprise'); } },
+        { label: T('退出登录'), icon: 'logout', danger: true, onClick: logout }
       ]
     });
     topAvatar.appendChild(dd);
@@ -102,7 +108,7 @@
 
   function logout() {
     D.logout();
-    UI.toast({ type: 'info', title: '已退出登录' });
+    UI.toast({ type: 'info', title: T('已退出登录') });
     applyAuthUI();
   }
 
@@ -132,7 +138,7 @@
     view.innerHTML = '';
     view.appendChild(window.ResolvePages[name]());
     setActiveNav(name);
-    topTitle.textContent = TITLES[name] || 'Resolve';
+    topTitle.textContent = T(TITLES[name] || 'Resolve');
     refreshBalances();
     view.focus();
   }
@@ -156,16 +162,27 @@
   R.register('/enterprise', { title: '企业版', render: function () { mountMain('enterprise'); } });
 
   /* ---------- 事件 ---------- */
+  document.getElementById('langBtn').addEventListener('click', function () { L.toggle(); });
   document.getElementById('bellBtn').addEventListener('click', function () {
-    UI.toast({ type: 'info', title: '暂无新通知', desc: '有 Agent 被调用或充值到账时会第一时间通知你' });
+    UI.toast({ type: 'info', title: T('暂无新通知'), desc: T('有 Agent 被调用或充值到账时会第一时间通知你') });
   });
   document.getElementById('topMenuBtn').addEventListener('click', toggleSidebar);
   D.on(function () { if (D.isAuthed()) refreshBalances(); });
+
+  /* ---------- 语言切换钩子：重设标题 / 侧栏收起文案 / 用户区 / 当前视图 ---------- */
+  function applyLocale() {
+    var lb = document.getElementById('langBtn');
+    if (lb) { lb.setAttribute('aria-label', T('语言')); lb.setAttribute('title', T('语言')); }
+    updateCollapseBtn();
+    renderUser();
+    R.run();
+  }
+  L.onChange(function () { applyLocale(); });
 
   /* ---------- 启动 ---------- */
   D.get();
   injectIcons();
   injectSidebarToggle();
-  window.ResolveApp = { applyAuthUI: applyAuthUI };
+  window.ResolveApp = { applyAuthUI: applyAuthUI, applyLocale: applyLocale };
   R.run();
 })();

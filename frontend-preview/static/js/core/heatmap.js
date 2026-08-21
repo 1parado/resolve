@@ -21,11 +21,13 @@ window.ResolveHeatmap = (function () {
     var today = new Date();
     var todayRow = (today.getDay() + 6) % 7;               /* 周一=0 … 周日=6 */
     var start = new Date(today.getTime() - (data.length - 1) * 86400000);
+    var T = window.ResolveI18N.T;
+    var en = window.ResolveI18N.isEn();
 
     var W = COLS * TOTAL - GAP + PAD * 2;
     var H = ROWS * TOTAL - GAP + 22;
 
-    var html = '<div class="heat-scroll"><svg class="heat" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" role="img" aria-label="近 53 周每日成交量热力图">';
+    var html = '<div class="heat-scroll"><svg class="heat" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" role="img" aria-label="' + T('近 53 周每日成交量热力图') + '">';
 
     /* 月份标签（在月份起始周的上方） */
     var lastMonth = -1;
@@ -36,7 +38,7 @@ window.ResolveHeatmap = (function () {
         var d0 = new Date(start.getTime() + di0 * 86400000);
         if (d0.getMonth() !== lastMonth) {
           lastMonth = d0.getMonth();
-          html += '<text x="' + (PAD + c * TOTAL + 1) + '" y="10" class="heat-month">' + (d0.getMonth() + 1) + '月</text>';
+          html += '<text x="' + (PAD + c * TOTAL + 1) + '" y="10" class="heat-month">' + (d0.getMonth() + 1) + (en ? '' : '月') + '</text>';
         }
       }
     }
@@ -49,7 +51,8 @@ window.ResolveHeatmap = (function () {
         if (idx < 0 || idx >= data.length) continue;
         var v = data[idx];
         var d = new Date(start.getTime() + idx * 86400000);
-        var tip = (d.getMonth() + 1) + '月' + d.getDate() + '日 · ' + v + ' 单成交';
+        var datePart = en ? (d.getMonth() + 1) + '/' + d.getDate() : (d.getMonth() + 1) + '月' + d.getDate() + '日';
+        var tip = datePart + ' · ' + v + T('单成交');
         html += '<rect class="heat-cell ' + level(v) + (idx === data.length - 1 ? ' today' : '') +
           '" data-v="' + v + '" data-tip="' + tip + '" x="' + (c * TOTAL) + '" y="' + (r * TOTAL) +
           '" width="' + CELL + '" height="' + CELL + '" rx="2.6"><title>' + tip + '</title></rect>';
@@ -58,9 +61,9 @@ window.ResolveHeatmap = (function () {
     html += '</g></svg></div>';
 
     /* 图例 */
-    html += '<div class="heat-foot"><span class="heat-legend"><span class="hl">少</span>' +
+    html += '<div class="heat-foot"><span class="heat-legend"><span class="hl">' + T('少') + '</span>' +
       ['l0', 'l1', 'l2', 'l3', 'l4'].map(function (l) { return '<span class="heat-cell ' + l + '"></span>'; }).join('') +
-      '<span class="hl">多</span></span></div>';
+      '<span class="hl">' + T('多') + '</span></span></div>';
 
     root.innerHTML = html;
 

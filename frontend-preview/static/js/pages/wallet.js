@@ -5,7 +5,7 @@ window.ResolvePages = window.ResolvePages || {};
 window.ResolvePages.wallet = function () {
   'use strict';
   var D = window.ResolveData, UI = window.ResolveUI, R = window.ResolveRouter;
-  var I = UI.I, esc = D.esc;
+  var I = UI.I, esc = D.esc, T = window.ResolveI18N.T;
 
   var data = D.get();
   var root = document.createElement('div');
@@ -18,15 +18,15 @@ window.ResolvePages.wallet = function () {
   var payMethod = 'wechat';
   function payOpts() {
     return [
-      { value: 'wechat', label: '微信支付', icon: 'wechat', brand: true },
-      { value: 'alipay', label: '支付宝', icon: 'alipay', brand: true }
+      { value: 'wechat', label: T('微信支付'), icon: 'wechat', brand: true },
+      { value: 'alipay', label: T('支付宝'), icon: 'alipay', brand: true }
     ];
   }
 
   var head = document.createElement('div');
   head.className = 'page-head';
-  head.innerHTML = '<div><h1 class="page-title">钱包</h1>' +
-    '<p class="page-sub">余额实时可见，充值支持微信与支付宝；消费按实际 token 与时长结算，多退少补。</p></div>';
+  head.innerHTML = '<div><h1 class="page-title">' + T('钱包') + '</h1>' +
+    '<p class="page-sub">' + T('余额实时可见，充值支持微信与支付宝；消费按实际 token 与时长结算，多退少补。') + '</p></div>';
   root.appendChild(head);
 
   var gridWrap = document.createElement('div');
@@ -42,13 +42,13 @@ window.ResolvePages.wallet = function () {
     var card = document.createElement('div');
     card.className = 'wal-balance-card';
     card.innerHTML =
-      '<div class="wal-lbl">' + I('wallet', 15) + '可用余额</div>' +
+      '<div class="wal-lbl">' + I('wallet', 15) + T('可用余额') + '</div>' +
       '<div class="wal-amt"><small>¥</small>' + D.fmtMoney(data.wallet.balance) + '</div>' +
-      '<div class="wal-month">本月已消费 ' + D.money(data.wallet.monthCost) + ' · 服务方收入 ' + D.money(D.stats().revenue) + '</div>';
+      '<div class="wal-month">' + T('本月已消费 {c} · 服务方收入 {r}', { c: D.money(data.wallet.monthCost), r: D.money(D.stats().revenue) }) + '</div>';
     var actions = document.createElement('div');
     actions.className = 'wal-actions';
-    actions.appendChild(UI.btn({ label: '立即充值', icon: 'plus', onClick: function () { document.querySelector('.wal-recharge-btn').click(); } }));
-    actions.appendChild(UI.btn({ label: '提现', icon: 'upload', variant: 'ghost', onClick: withdraw }));
+    actions.appendChild(UI.btn({ label: T('立即充值'), icon: 'plus', onClick: function () { document.querySelector('.wal-recharge-btn').click(); } }));
+    actions.appendChild(UI.btn({ label: T('提现'), icon: 'upload', variant: 'ghost', onClick: withdraw }));
     card.appendChild(actions);
     return card;
   }
@@ -59,7 +59,7 @@ window.ResolvePages.wallet = function () {
     panel.className = 'recharge-panel';
     var title = document.createElement('div');
     title.className = 'rp-title';
-    title.appendChild(document.createTextNode('充值'));
+    title.appendChild(document.createTextNode(T('充值')));
     title.appendChild(document.createTextNode(' '));
     var chips = document.createElement('div');
     chips.className = 'pay-amt-chips';
@@ -85,7 +85,7 @@ window.ResolvePages.wallet = function () {
       onChange: function (v) { payMethod = v; }
     });
     payRow.appendChild(seg);
-    var btn = UI.btn({ label: '立即充值', icon: 'qr', variant: 'primary', size: 'lg', block: true, cls: 'wal-recharge-btn' });
+    var btn = UI.btn({ label: T('立即充值'), icon: 'qr', variant: 'primary', size: 'lg', block: true, cls: 'wal-recharge-btn' });
     btn.classList.add('wal-recharge-btn');
     btn.addEventListener('click', startRecharge);
     panel.appendChild(title);
@@ -104,22 +104,22 @@ window.ResolvePages.wallet = function () {
       '<div class="pay-qr-wrap">' +
         '<div class="pay-qr-box">' + qrSVG(payMethod + selAmount + D.me().name) + '</div>' +
         '<div class="pay-qr-side">' +
-          '<div class="pay-vendor">' + window.ResolveIcons.brand(method.value, { size: 24 }) + '<span>使用' + vendor + '扫码支付（模拟）</span></div>' +
+          '<div class="pay-vendor">' + window.ResolveIcons.brand(method.value, { size: 24 }) + '<span>' + T('使用 {v} 扫码支付（模拟）', { v: vendor }) + '</span></div>' +
           '<div class="pay-amount">¥' + D.fmtMoney(selAmount) + '</div>' +
-          '<div class="pay-status">请打开' + vendor + '扫一扫完成付款</div>' +
+          '<div class="pay-status">' + T('请打开 {v} 扫一扫完成付款', { v: vendor }) + '</div>' +
         '</div>' +
       '</div>';
     var m = UI.modal({
-      title: '扫码充值', subtitle: '向 Resolve 钱包充值 ¥' + D.fmtMoney(selAmount),
+      title: T('扫码充值'), subtitle: T('向 Resolve 钱包充值 ¥{n}', { n: D.fmtMoney(selAmount) }),
       body: body, sheet: window.innerWidth < 700,
       footer: [
-        UI.btn({ label: '取消', onClick: function () { m.close(); } }),
-        UI.btn({ label: '我已完成支付', variant: 'primary', onClick: function (ev, btn) {
+        UI.btn({ label: T('取消'), onClick: function () { m.close(); } }),
+        UI.btn({ label: T('我已完成支付'), variant: 'primary', onClick: function (ev, btn) {
           btn.disabled = true;
-          btn.textContent = '正在确认…';
+          btn.textContent = T('正在确认…');
           setTimeout(function () {
             D.recharge(selAmount, vendor);
-            UI.toast({ type: 'success', title: '充值成功', desc: vendor + ' 到账 ' + D.money(selAmount) });
+            UI.toast({ type: 'success', title: T('充值成功'), desc: T('{v} 到账 {n}', { v: vendor, n: D.money(selAmount) }) });
             m.close();
             R.run();
           }, 700);
@@ -133,25 +133,25 @@ window.ResolvePages.wallet = function () {
 
   /* ---------- 提现 ---------- */
   function withdraw() {
-    var f = UI.field({ label: '提现金额', type: 'number', placeholder: '请输入金额', value: '100' });
+    var f = UI.field({ label: T('提现金额'), type: 'number', placeholder: T('请输入金额'), value: '100' });
     var body = document.createElement('div');
     body.style.cssText = 'display:flex; flex-direction:column; gap:6px;';
     body.appendChild(f);
     var note = document.createElement('div');
     note.style.cssText = 'font-size:12px; color:var(--text-faint);';
-    note.innerHTML = I('info', 12) + ' 提现到实名银行卡，T+1 到账（模拟）。当前余额 ' + D.money(data.wallet.balance);
+    note.innerHTML = I('info', 12) + ' ' + T('提现到实名银行卡，T+1 到账（模拟）。当前余额 {n}', { n: D.money(data.wallet.balance) });
     body.appendChild(note);
-    var m = UI.modal({ title: '提现', body: body, footer: [
-      UI.btn({ label: '取消', onClick: function () { m.close(); } }),
-      UI.btn({ label: '确认提现', variant: 'primary', onClick: function (ev, btn) {
+    var m = UI.modal({ title: T('提现'), body: body, footer: [
+      UI.btn({ label: T('取消'), onClick: function () { m.close(); } }),
+      UI.btn({ label: T('确认提现'), variant: 'primary', onClick: function (ev, btn) {
         var v = parseFloat(f.input.value);
-        if (!v || v <= 0) return UI.toast({ type: 'error', title: '请输入有效金额' });
-        if (v > data.wallet.balance) return UI.toast({ type: 'error', title: '余额不足' });
-        D.addBilling({ type: 'withdraw', agent: '提现到银行卡', amount: -v, method: '银行卡' });
+        if (!v || v <= 0) return UI.toast({ type: 'error', title: T('请输入有效金额') });
+        if (v > data.wallet.balance) return UI.toast({ type: 'error', title: T('余额不足') });
+        D.addBilling({ type: 'withdraw', agent: T('提现到银行卡'), amount: -v, method: T('银行卡') });
         D.get().wallet.balance = Math.round((data.wallet.balance - v) * 100) / 100;
         D.set();
         m.close();
-        UI.toast({ type: 'success', title: '提现申请已提交', desc: '¥' + D.fmtMoney(v) + ' 预计 T+1 到账' });
+        UI.toast({ type: 'success', title: T('提现申请已提交'), desc: T('¥{n} 预计 T+1 到账', { n: D.fmtMoney(v) }) });
         R.run();
       } })
     ]});
@@ -164,8 +164,8 @@ window.ResolvePages.wallet = function () {
     card.style.cssText = 'margin-top:16px;';
     var headH = document.createElement('div');
     headH.className = 'card-head';
-    headH.innerHTML = '<div><div class="card-title">' + I('list', 15) + '账单流水</div>' +
-      '<div class="card-sub">全部收支记录，可追溯、可申诉</div></div>';
+    headH.innerHTML = '<div><div class="card-title">' + I('list', 15) + T('账单流水') + '</div>' +
+      '<div class="card-sub">' + T('全部收支记录，可追溯、可申诉') + '</div></div>';
     card.appendChild(headH);
     var tabsWrap = document.createElement('div');
     tabsWrap.className = 'admin-tabs-wrap';
@@ -173,8 +173,8 @@ window.ResolvePages.wallet = function () {
     tabsWrap.appendChild(UI.tabs({
       variant: 'pill',
       items: [
-        { value: 'all', label: '全部' }, { value: 'recharge', label: '充值' },
-        { value: 'call', label: '消费' }, { value: 'withdraw', label: '提现' }
+        { value: 'all', label: T('全部') }, { value: 'recharge', label: T('充值') },
+        { value: 'call', label: T('消费') }, { value: 'withdraw', label: T('提现') }
       ],
       value: filter,
       onChange: function (v) { filter = v; renderBills(body); }
@@ -191,7 +191,7 @@ window.ResolvePages.wallet = function () {
     body.innerHTML = '';
     var list = data.billing.filter(function (b) { return filter === 'all' || b.type === filter; });
     if (!list.length) {
-      body.appendChild(UI.empty({ icon: 'list', title: '暂无账单', desc: '该分类下还没有记录。' }));
+      body.appendChild(UI.empty({ icon: 'list', title: T('暂无账单'), desc: T('该分类下还没有记录。') }));
       return;
     }
     var wrap = document.createElement('div');

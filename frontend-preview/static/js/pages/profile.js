@@ -6,7 +6,7 @@ window.ResolvePages = window.ResolvePages || {};
 window.ResolvePages.profile = function () {
   'use strict';
   var D = window.ResolveData, UI = window.ResolveUI, R = window.ResolveRouter, HM = window.ResolveHeatmap;
-  var I = UI.I, esc = D.esc;
+  var I = UI.I, esc = D.esc, T = window.ResolveI18N.T;
 
   var data = D.get();
   var me = D.me();
@@ -17,8 +17,8 @@ window.ResolvePages.profile = function () {
   /* ---------- 页头 ---------- */
   var head = document.createElement('div');
   head.className = 'page-head';
-  head.innerHTML = '<div><h1 class="page-title">个人主页</h1>' +
-    '<p class="page-sub">你的公开身份与在线节点，其他用户可见、可调。成交量按天记录，最近 53 周可回溯。</p></div>';
+  head.innerHTML = '<div><h1 class="page-title">' + T('个人主页') + '</h1>' +
+    '<p class="page-sub">' + T('你的公开身份与在线节点，其他用户可见、可调。成交量按天记录，最近 53 周可回溯。') + '</p></div>';
   root.appendChild(head);
 
   /* ---------- 身份卡 ---------- */
@@ -32,7 +32,7 @@ window.ResolvePages.profile = function () {
   var nameRow = document.createElement('div');
   nameRow.className = 'pf-name';
   nameRow.appendChild(document.createTextNode(me.name));
-  nameRow.appendChild(UI.tag({ text: '认证服务商', variant: 'brand', dot: true }));
+  nameRow.appendChild(UI.tag({ text: T('认证服务商'), variant: 'brand', dot: true }));
   info.appendChild(nameRow);
   var job = document.createElement('div'); job.className = 'pf-job'; job.textContent = data.profile.job;
   var meta = document.createElement('div'); meta.className = 'pf-meta';
@@ -41,33 +41,33 @@ window.ResolvePages.profile = function () {
   gh.innerHTML = window.ResolveIcons.brand('github', { size: 15 }) + '<span>github.com/' + esc(me.github) + '</span>';
   meta.appendChild(gh);
   var jd = document.createElement('span'); jd.className = 'pf-joined';
-  jd.innerHTML = I('calendar', 14) + '<span>加入于 ' + esc(data.profile.joined) + '</span>';
+  jd.innerHTML = I('calendar', 14) + '<span>' + T('加入于 {d}', { d: esc(data.profile.joined) }) + '</span>';
   meta.appendChild(jd);
   var bio = document.createElement('p'); bio.className = 'pf-bio'; bio.textContent = data.profile.bio;
   info.appendChild(job); info.appendChild(meta); info.appendChild(bio);
   heroInner.appendChild(info);
   var heroActions = document.createElement('div');
   heroActions.className = 'pf-actions';
-  heroActions.appendChild(UI.btn({ label: '编辑资料', icon: 'edit', onClick: editProfile }));
-  heroActions.appendChild(UI.btn({ label: '接入 Agent', icon: 'plug', variant: 'primary', onClick: function () { R.nav('/connect'); } }));
+  heroActions.appendChild(UI.btn({ label: T('编辑资料'), icon: 'edit', onClick: editProfile }));
+  heroActions.appendChild(UI.btn({ label: T('接入 Agent'), icon: 'plug', variant: 'primary', onClick: function () { R.nav('/connect'); } }));
   heroInner.appendChild(heroActions);
   root.appendChild(hero);
 
   /* ---------- 指标 ---------- */
   var stats = document.createElement('div');
   stats.className = 'grid grid-4';
-  stats.appendChild(UI.stat({ icon: 'zap', label: '今日成交量', value: st.today + ' 单', hint: '实时', accent: true }));
-  stats.appendChild(UI.stat({ icon: 'trending-up', label: '本周成交量', value: st.week + ' 单' }));
-  stats.appendChild(UI.stat({ icon: 'check-circle', label: '累计成交量', value: D.fmtNum(st.total) + ' 单' }));
-  stats.appendChild(UI.stat({ icon: 'coins', label: '本月收入', value: D.money(st.revenue), accent: true }));
+  stats.appendChild(UI.stat({ icon: 'zap', label: T('今日成交量'), value: st.today + T(' 单'), hint: T('实时'), accent: true }));
+  stats.appendChild(UI.stat({ icon: 'trending-up', label: T('本周成交量'), value: st.week + T(' 单') }));
+  stats.appendChild(UI.stat({ icon: 'check-circle', label: T('累计成交量'), value: D.fmtNum(st.total) + T(' 单') }));
+  stats.appendChild(UI.stat({ icon: 'coins', label: T('本月收入'), value: D.money(st.revenue), accent: true }));
   root.appendChild(stats);
 
   /* ---------- 成交量热力图 ---------- */
   var heatCard = document.createElement('div');
   heatCard.className = 'card';
-  heatCard.innerHTML = '<div class="card-head"><div><div class="card-title">' + I('grid', 15) + '成交量热力图</div>' +
-    '<div class="card-sub">近 53 周 · 按天记录成交笔数</div></div>' +
-    '<span class="heat-total">累计 <b>' + D.fmtNum(st.total) + '</b> 单</span></div>' +
+  heatCard.innerHTML = '<div class="card-head"><div><div class="card-title">' + I('grid', 15) + T('成交量热力图') + '</div>' +
+    '<div class="card-sub">' + T('近 53 周 · 按天记录成交笔数') + '</div></div>' +
+    '<span class="heat-total">' + T('累计 {n} 单', { n: D.fmtNum(st.total) }) + '</span></div>' +
     '<div class="card-body"><div class="heat-root"></div></div>';
   var heatRoot = heatCard.querySelector('.heat-root');
   root.appendChild(heatCard);
@@ -90,15 +90,15 @@ window.ResolvePages.profile = function () {
     card.className = 'card';
     var headH = document.createElement('div');
     headH.className = 'card-head';
-    headH.innerHTML = '<div><div class="card-title">' + I('cpu', 15) + '我的 Agents</div>' +
-      '<div class="card-sub">已接入 ' + data.agents.length + ' 个 Agent · 点击查看详情</div></div>';
+    headH.innerHTML = '<div><div class="card-title">' + I('cpu', 15) + T('我的 Agents') + '</div>' +
+      '<div class="card-sub">' + T('已接入 {n} 个 Agent · 点击查看详情', { n: data.agents.length }) + '</div></div>';
     card.appendChild(headH);
     var body = document.createElement('div');
     body.className = 'card-body';
     body.style.cssText = 'display:flex; flex-direction:column; gap:12px;';
     data.agents.forEach(function (a) { body.appendChild(agentTile(a)); });
     var addBtn = UI.btn({
-      label: '接入新的 Agent', icon: 'plus',
+      label: T('接入新的 Agent'), icon: 'plus',
       onClick: function () { R.nav('/connect'); }
     });
     addBtn.style.cssText = 'border-style: dashed; width:100%; justify-content:center; color: var(--brand); background: var(--brand-soft); border-color: var(--brand-line);';
@@ -120,7 +120,7 @@ window.ResolvePages.profile = function () {
     var nameRow = document.createElement('div');
     nameRow.className = 'at-name';
     nameRow.appendChild(document.createTextNode(a.name));
-    nameRow.appendChild(UI.statusDot(a.status, a.status === 'online' ? '在线' : a.status === 'standby' ? '待命' : '离线'));
+    nameRow.appendChild(UI.statusDot(a.status, a.status === 'online' ? T('在线') : a.status === 'standby' ? T('待命') : T('离线')));
     var prod = document.createElement('div'); prod.className = 'at-product'; prod.textContent = a.product;
     var models = document.createElement('div'); models.className = 'at-models';
     a.models.forEach(function (m) { models.appendChild(modelChip(m)); });
@@ -151,20 +151,20 @@ window.ResolvePages.profile = function () {
     body.appendChild(desc);
     var lines = document.createElement('div');
     lines.innerHTML =
-      '<div class="quote-line"><span class="k">模型矩阵</span><span class="v">' + esc(a.models.join(' · ')) + '</span></div>' +
-      '<div class="quote-line"><span class="k">计费方式</span><span class="v">' + esc(a.price) + esc(a.unit) + '</span></div>' +
-      '<div class="quote-line"><span class="k">运行位置</span><span class="v">' + (a.id === 'openclaw' ? '本地节点 · 数据不出机' : '本地节点') + '</span></div>' +
-      '<div class="quote-line"><span class="k">当前状态</span><span class="v">' + (a.status === 'online' ? '在线可调' : a.status === 'standby' ? '待命中' : '离线') + '</span></div>';
+      '<div class="quote-line"><span class="k">' + T('模型矩阵') + '</span><span class="v">' + esc(a.models.join(' · ')) + '</span></div>' +
+      '<div class="quote-line"><span class="k">' + T('计费方式') + '</span><span class="v">' + esc(a.price) + esc(a.unit) + '</span></div>' +
+      '<div class="quote-line"><span class="k">' + T('运行位置') + '</span><span class="v">' + (a.id === 'openclaw' ? T('本地节点 · 数据不出机') : T('本地节点')) + '</span></div>' +
+      '<div class="quote-line"><span class="k">' + T('当前状态') + '</span><span class="v">' + (a.status === 'online' ? T('在线可调') : a.status === 'standby' ? T('待命中') : T('离线')) + '</span></div>';
     body.appendChild(lines);
     var m = UI.modal({ title: a.name, subtitle: a.product, body: body, footer: [] });
     var foot = m.querySelector('.modal-foot');
     if (foot) {
-      foot.appendChild(UI.btn({ label: '复制分享链接', icon: 'copy', onClick: function () {
+      foot.appendChild(UI.btn({ label: T('复制分享链接'), icon: 'copy', onClick: function () {
         var link = 'resolve.app/agents/' + a.id;
-        var done = function () { UI.toast({ type: 'success', title: '分享链接已复制', desc: link }); };
+        var done = function () { UI.toast({ type: 'success', title: T('分享链接已复制'), desc: link }); };
         if (navigator.clipboard) navigator.clipboard.writeText(link).then(done).catch(done); else done();
       } }));
-      foot.appendChild(UI.btn({ label: '关闭', variant: 'primary', onClick: function () { m.close(); } }));
+      foot.appendChild(UI.btn({ label: T('关闭'), variant: 'primary', onClick: function () { m.close(); } }));
     }
   }
 
@@ -174,8 +174,8 @@ window.ResolvePages.profile = function () {
     card.className = 'card';
     var headH = document.createElement('div');
     headH.className = 'card-head';
-    headH.innerHTML = '<div><div class="card-title">' + I('server', 15) + '在线节点</div>' +
-      '<div class="card-sub">接入的本地 / 云端 Agent 载体</div></div>';
+    headH.innerHTML = '<div><div class="card-title">' + I('server', 15) + T('在线节点') + '</div>' +
+      '<div class="card-sub">' + T('接入的本地 / 云端 Agent 载体') + '</div></div>';
     card.appendChild(headH);
     var body = document.createElement('div');
     body.className = 'card-body';
@@ -191,20 +191,20 @@ window.ResolvePages.profile = function () {
       var title = document.createElement('div');
       title.className = 'node-title';
       title.appendChild(document.createTextNode(node.name));
-      title.appendChild(UI.statusDot('online', '在线'));
+      title.appendChild(UI.statusDot('online', T('在线')));
       var meta = document.createElement('div');
       meta.className = 'node-meta';
       meta.appendChild(ipMono(node.ip + ':' + node.port));
       meta.appendChild(envBadge(node.runtime));
       meta.appendChild(UI.osBadge({ id: 'linux', label: 'Ubuntu 22.04' }));
-      meta.appendChild(UI.tag({ text: node.visibility === 'public' ? '全网公开' : '仅企业内网', variant: node.visibility === 'public' ? 'brand' : 'warn' }));
+      meta.appendChild(UI.tag({ text: node.visibility === 'public' ? T('全网公开') : T('仅企业内网'), variant: node.visibility === 'public' ? 'brand' : 'warn' }));
       main.appendChild(title); main.appendChild(meta);
-      var mgr = UI.btn({ label: '管理', variant: 'ghost', size: 'sm', icon: 'settings', onClick: function () { R.nav('/connect'); } });
+      var mgr = UI.btn({ label: T('管理'), variant: 'ghost', size: 'sm', icon: 'settings', onClick: function () { R.nav('/connect'); } });
       nc.appendChild(ico); nc.appendChild(main); nc.appendChild(mgr);
       body.appendChild(nc);
       var agentsNote = document.createElement('div');
       agentsNote.style.cssText = 'margin-top:10px; font-size:12.5px; color:var(--text-faint);';
-      agentsNote.innerHTML = '发布时接入 ' + node.agents.length + ' 个 Agent：';
+      agentsNote.innerHTML = T('发布时接入 {n} 个 Agent：', { n: node.agents.length });
       var chips = document.createElement('div');
       chips.style.cssText = 'display:flex; gap:6px; flex-wrap:wrap; margin-top:7px;';
       node.agents.forEach(function (id) {
@@ -215,9 +215,9 @@ window.ResolvePages.profile = function () {
     } else {
       var empty = UI.empty({
         icon: 'plug',
-        title: '尚未接入节点',
-        desc: '扫描本地或云端 Agent，可视化配置 IP、端口与模型后一键发布到个人主页。',
-        action: UI.btn({ label: '立即接入', icon: 'scan', variant: 'primary', onClick: function () { R.nav('/connect'); } })
+        title: T('尚未接入节点'),
+        desc: T('扫描本地或云端 Agent，可视化配置 IP、端口与模型后一键发布到个人主页。'),
+        action: UI.btn({ label: T('立即接入'), icon: 'scan', variant: 'primary', onClick: function () { R.nav('/connect'); } })
       });
       body.appendChild(empty);
     }
@@ -231,12 +231,12 @@ window.ResolvePages.profile = function () {
     card.className = 'card';
     var headH = document.createElement('div');
     headH.className = 'card-head';
-    headH.innerHTML = '<div><div class="card-title">' + I('clock', 15) + '最近成交</div>' +
-      '<div class="card-sub">' + (data.billing.length) + ' 条流水</div></div>';
+    headH.innerHTML = '<div><div class="card-title">' + I('clock', 15) + T('最近成交') + '</div>' +
+      '<div class="card-sub">' + data.billing.length + T(' 条流水') + '</div></div>';
     var more = document.createElement('a');
     more.href = '#/wallet';
     more.style.cssText = 'font-size:12.5px; color:var(--brand); text-decoration:none;';
-    more.textContent = '全部流水';
+    more.textContent = T('全部流水');
     headH.appendChild(more);
     card.appendChild(headH);
     var body = document.createElement('div');
@@ -263,7 +263,7 @@ window.ResolvePages.profile = function () {
     var main = document.createElement('div');
     main.className = 'tx-main';
     var nm = document.createElement('div'); nm.className = 'tx-name';
-    nm.textContent = (isRecharge ? '充值 · ' : isWithdraw ? '提现 · ' : '调用 · ') + b.agent;
+    nm.textContent = T(isRecharge ? '充值 · {a}' : isWithdraw ? '提现 · {a}' : '调用 · {a}', { a: b.agent });
     var tm = document.createElement('div'); tm.className = 'tx-time';
     tm.textContent = D.timeAgo(b.time);
     main.appendChild(nm); main.appendChild(tm);
@@ -287,25 +287,28 @@ window.ResolvePages.profile = function () {
   function editProfile() {
     var fmt = document.createElement('div');
     fmt.style.cssText = 'display:flex; flex-direction:column; gap:14px;';
-    var fName = UI.field({ label: '名称', value: data.profile.name, id: 'pf-name' });
-    var fJob = UI.field({ label: '职业', value: data.profile.job, id: 'pf-job' });
-    var fGithub = UI.field({ label: 'GitHub 用户名', value: data.profile.github, placeholder: 'your-name', id: 'pf-gh' });
+    var fName = UI.field({ label: T('名称'), value: data.profile.name, id: 'pf-name' });
+    var fJob = UI.field({ label: T('职业'), value: data.profile.job, id: 'pf-job' });
+    var fGithub = UI.field({ label: T('GitHub 用户名'), value: data.profile.github, placeholder: 'your-name', id: 'pf-gh' });
     var osWrap = document.createElement('div');
     osWrap.className = 'field';
-    osWrap.innerHTML = '<label class="fl" for="pf-os">运行环境</label><select class="inp" id="pf-os">' +
+    osWrap.innerHTML = '<label class="fl" for="pf-os">' + T('运行环境') + '</label><select class="inp" id="pf-os">' +
       '<option value="macos">macOS</option><option value="windows">Windows</option><option value="linux">Linux</option></select>';
     osWrap.querySelector('select').value = data.profile.os.id;
     var bioF = document.createElement('div');
     bioF.className = 'field';
-    bioF.innerHTML = '<label class="fl" for="pf-bio">个人简介</label><textarea class="inp" id="pf-bio" rows="3" style="resize:vertical">' + esc(data.profile.bio) + '</textarea>';
-    var osLabel = { macos: 'macOS 15.1', windows: 'Windows 11', linux: 'Linux Ubuntu 24.04' };
-    fmt.appendChild(fName); fmt.appendChild(fJob); fmt.appendChild(fGithub); fmt.appendChild(osWrap); fmt.appendChild(bioF);
+    bioF.innerHTML = '<label class="fl" for="pf-bio">' + T('个人简介') + '</label><textarea class="inp" id="pf-bio" rows="3" style="resize:vertical">' + esc(data.profile.bio) + '</textarea>';
+    var osLabel = {
+      macos: 'macOS 15.1',
+      windows: 'Windows 11',
+      linux: 'Linux Ubuntu 24.04'
+    };
     var m = UI.modal({
-      title: '编辑资料', subtitle: '这些信息会在个人主页公开',
+      title: T('编辑资料'), subtitle: T('这些信息会在个人主页公开'),
       body: fmt,
       footer: [
-        UI.btn({ label: '取消', onClick: function () { m.close(); } }),
-        UI.btn({ label: '保存修改', variant: 'primary', onClick: function () {
+        UI.btn({ label: T('取消'), onClick: function () { m.close(); } }),
+        UI.btn({ label: T('保存修改'), variant: 'primary', onClick: function () {
           var p = data.profile;
           p.name = fName.input.value.trim() || p.name;
           p.job = fJob.input.value.trim() || p.job;
@@ -315,7 +318,7 @@ window.ResolvePages.profile = function () {
           p.bio = bioF.querySelector('textarea').value.trim() || p.bio;
           D.set();
           m.close();
-          UI.toast({ type: 'success', title: '资料已更新' });
+          UI.toast({ type: 'success', title: T('资料已更新') });
           R.run();
         } })
       ]
