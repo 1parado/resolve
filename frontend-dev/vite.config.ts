@@ -14,6 +14,13 @@ export default defineConfig({
   server: {
     port: 5174,
     open: '/app.html',
+    proxy: {
+      // 开发环境把 /api 转发到后端服务
+      '/api': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+      },
+    },
     watch: {
       // Windows 上文件编辑器使用临时文件替换，原生 watcher 会 EBUSY 崩溃，改用轮询
       usePolling: true,

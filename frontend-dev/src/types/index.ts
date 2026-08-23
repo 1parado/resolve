@@ -8,6 +8,7 @@ export interface OS { id: OSId; label: string }
 export type Provider = 'github' | 'email'
 
 export interface SessionUser {
+  id?: string
   name: string
   github?: string
   email?: string
@@ -45,7 +46,19 @@ export interface Agent {
 }
 
 export type Visibility = 'public' | 'enterprise'
+
+/** 节点代理扫描到的本机真实 Agent */
+export interface LocalAgentInfo {
+  id: string
+  name: string
+  cli: string
+  path: string
+  version: string
+  authed: boolean
+}
+
 export interface NodeInfo {
+  id: string
   connected: boolean
   name: string
   ip: string
@@ -55,6 +68,8 @@ export interface NodeInfo {
   visibility: Visibility
   agents: string[]
   published: boolean
+  token?: string
+  agentsInfo?: LocalAgentInfo[]
 }
 
 export type BillingType = 'call' | 'recharge' | 'withdraw'
@@ -66,6 +81,27 @@ export interface Billing {
   amount: number
   status: string
   method: string
+}
+
+/** 运行时任务：市场调用 → 节点执行（A 发起 / B 承接，实时进度） */
+export type RuntimeStatus = 'running' | 'done' | 'failed' | 'timeout'
+export interface RuntimeTask {
+  taskId: string
+  nodeId: string
+  ownerUserId: string
+  callerUserId: string
+  itemId: string
+  vendor: string
+  agent: string
+  prompt: string
+  priceNum: number
+  status: RuntimeStatus
+  startedAt: number
+  finishedAt: number
+  log: string
+  tokens: number
+  cost: number
+  ok: boolean
 }
 
 export type MarketCat = 'code' | 'reason' | 'ops' | 'content' | 'data' | 'design'

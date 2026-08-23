@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { marketApi } from '@/api'
 import { getData } from '@/mock'
-import { useWalletStore } from './wallet'
 import type { MarketCat, MarketItem } from '@/types'
 
 const CATS: { value: MarketCat | 'all'; label: string }[] = [
@@ -46,7 +45,6 @@ export const useMarketStore = defineStore('market', () => {
 
   async function runCall(item: MarketItem, prompt: string) {
     const r = await marketApi.call(item.id, prompt)
-    useWalletStore().sync()
     return r
   }
 
@@ -54,5 +52,10 @@ export const useMarketStore = defineStore('market', () => {
     items.value.unshift(item)
   }
 
-  return { items, query, cat, sort, filtered, CATS, setQuery, setCat, setSort, runCall, addItem }
+  /** 从后端拉取市场列表 */
+  async function refresh() {
+    items.value = await marketApi.list()
+  }
+
+  return { items, query, cat, sort, filtered, CATS, setQuery, setCat, setSort, runCall, addItem, refresh }
 })

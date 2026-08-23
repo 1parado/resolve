@@ -1,11 +1,29 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 import { useUiStore } from '@/stores/ui'
+import { useProfileStore } from '@/stores/profile'
+import { useWalletStore } from '@/stores/wallet'
+import { useMarketStore } from '@/stores/market'
+import { useTasksStore } from '@/stores/tasks'
 import SidebarNav from './SidebarNav.vue'
 import TopBar from './TopBar.vue'
 import MobileTabBar from './MobileTabBar.vue'
 
 const ui = useUiStore()
+const profile = useProfileStore()
+const wallet = useWalletStore()
+const market = useMarketStore()
+const tasks = useTasksStore()
+
+// 进入应用外壳后，从后端拉取真实数据（替换 mock 初始值）
+onMounted(async () => {
+  try {
+    await Promise.allSettled([profile.refresh(), wallet.refresh(), market.refresh(), tasks.refresh()])
+  } catch {
+    /* 静默失败，保留本地兜底数据 */
+  }
+})
 </script>
 
 <template>

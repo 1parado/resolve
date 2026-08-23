@@ -62,7 +62,7 @@ function defaults(): AppData {
       { id: 'openclaw', name: 'OpenClaw', product: 'OpenClaw Local', icon: 'openclaw', status: 'online', accent: '#D64045', models: ['local-llama-3.3-70b', 'qwen3-coder-30b'], price: '¥0.03', unit: '/千token', tags: ['本地算力', '私有数据'], desc: '完全本地运行的长时任务代理，数据不出本机，适合敏感场景。' },
       { id: 'hermes', name: 'Hermes', product: 'Hermes Reasoning', icon: 'hermes', status: 'standby', accent: '#2d6376', models: ['hermes-4-405b', 'deepseek-r1'], price: '¥0.05', unit: '/千token', tags: ['深度推理', '分析'], desc: '高强度推理与结构化分析代理，数学、逻辑、研究场景首选。' },
     ],
-    node: { connected: false, name: '', ip: '', port: '', runtime: '', os: '', visibility: 'public', agents: [], published: false },
+    node: { id: 'n_dev', connected: false, name: '', ip: '', port: '', runtime: '', os: '', visibility: 'public', agents: [], published: false },
     wallet: { balance: 286.4, monthCost: 118.6 },
     billing: [
       { id: 'b1', time: d - 0.6 * H, type: 'call', agent: 'Claude Code', amount: -21.3, status: 'done', method: '余额' },

@@ -29,7 +29,7 @@ export const useProfileStore = defineStore('profile', () => {
       profile.value = r.profile
       agents.value = r.agents
       node.value = r.node
-      heatmap.value = r.heatmap
+      heatmap.value = r.heatmap as number[]
       stat.value = r.stats
     } finally {
       loading.value = false

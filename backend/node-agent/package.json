@@ -1,0 +1,22 @@
+{
+  "name": "resolve-node-agent",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Resolve 节点代理：B 电脑端常驻进程，连接中心服务器并执行远程任务",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.2",
+    "@types/ws": "^8.5.12",
+    "tsx": "^4.16.2",
+    "typescript": "^5.4.5"
+  }
+}

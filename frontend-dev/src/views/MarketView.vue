@@ -61,7 +61,9 @@ async function doCall() {
   calling.value = true
   try {
     const r = await market.runCall(callTarget.value, prompt.value.trim())
-    ui.toast({ type: 'success', title: t('调用完成'), desc: t('{n} 本次费用 {c}', { n: r.name, c: money(r.finalCost) }) })
+    ui.toast({ type: 'success', title: t('任务已下发'), desc: t('正在 {n} 上执行，已跳转到实时进度页', { n: r.name }) })
+    // 跳转到 Agent 详情页并自动打开实时执行终端
+    router.push({ path: '/market/' + callTarget.value.id, query: { run: r.taskId } })
     callTarget.value = null
   } finally {
     calling.value = false

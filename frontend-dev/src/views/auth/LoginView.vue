@@ -47,7 +47,7 @@ async function submitEmail() {
     emailErr.value = t('邮箱格式不正确')
     return
   }
-  await auth.login('email', { name: '陈默', email: email.value.trim(), color: '#1a73e8' })
+  await auth.login('email', { name: '陈默', email: email.value.trim(), color: '#1a73e8' }, password.value)
   afterLogin('陈默')
 }
 

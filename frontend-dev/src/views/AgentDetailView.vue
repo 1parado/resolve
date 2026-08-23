@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useMarketStore } from '@/stores/market'
 import { useWalletStore } from '@/stores/wallet'
@@ -12,8 +12,10 @@ import AppModal from '@/components/base/AppModal.vue'
 import Rating from '@/components/base/Rating.vue'
 import StatusDot from '@/components/base/StatusDot.vue'
 import EmptyState from '@/components/base/EmptyState.vue'
+import TaskTerminal from '@/components/runtime/TaskTerminal.vue'
 import { t } from '@/i18n'
 import { fmtNum, hexA, identicon, money } from '@/utils/format'
+import type { RuntimeResult } from '@/api'
 import type { MarketItem } from '@/types'
 
 const route = useRoute()
@@ -29,6 +31,20 @@ const related = computed(() => (item.value ? market.items.filter((m) => m.cat ==
 const prompt = ref('')
 const calling = ref(false)
 const callOpen = ref(false)
+type Phase = 'form' | 'run' | 'done'
+const phase = ref<Phase>('form')
+const activeTaskId = ref('')
+const runResult = ref<RuntimeResult | null>(null)
+
+// 从市场列表快速调用跳转而来：?run=<taskId> 自动打开实时执行终端
+onMounted(() => {
+  const run = route.query.run
+  if (typeof run === 'string' && run) {
+    activeTaskId.value = run
+    phase.value = 'run'
+    callOpen.value = true
+  }
+})
 
 function estCost(m: MarketItem): number {
   return m.priceNum >= 1 ? +(m.priceNum / 100).toFixed(2) : +(m.priceNum * 18).toFixed(2)
@@ -48,11 +64,37 @@ async function doCall() {
   calling.value = true
   try {
     const r = await market.runCall(item.value, prompt.value.trim())
-    ui.toast({ type: 'success', title: t('调用完成'), desc: t('{n} 本次费用 {c}', { n: r.name, c: money(r.finalCost) }) })
-    callOpen.value = false
+    activeTaskId.value = r.taskId
+    runResult.value = null
+    phase.value = 'run'
+    ui.toast({ type: 'success', title: t('任务已下发'), desc: t('正在 {n} 上执行，可实时查看进度', { n: r.name }) })
+  } catch (e) {
+    ui.toast({ type: 'error', title: t('调用失败'), desc: (e as Error).message })
   } finally {
     calling.value = false
   }
+}
+
+function onTaskFinish(r: RuntimeResult) {
+  runResult.value = r
+  phase.value = 'done'
+  wallet.refresh().catch(() => {})
+  ui.toast({
+    type: r.ok ? 'success' : 'error',
+    title: r.ok ? t('执行完成') : t('执行失败'),
+    desc: t('{n} 本次费用 {c}', { n: item.value?.name || '', c: money(r.cost) }),
+  })
+}
+
+function closeCall() {
+  callOpen.value = false
+  phase.value = 'form'
+  runResult.value = null
+}
+
+function again() {
+  phase.value = 'form'
+  runResult.value = null
 }
 
 function collect() {
@@ -202,17 +244,48 @@ function collect() {
         </div>
       </AppCard>
 
-      <AppModal :model-value="callOpen" :title="item.name" :subtitle="t('给 {n} 的任务描述', { n: item.name })" :width="480" @update:model-value="(v: boolean) => (callOpen = v)">
-        <div class="call">
+      <AppModal :model-value="callOpen" :title="phase === 'form' ? item.name : item.name + ' · 执行中'" :subtitle="phase === 'form' ? t('给 {n} 的任务描述', { n: item.name }) : t('实时查看执行过程')" :width="560" @update:model-value="(v: boolean) => (v ? (callOpen = true) : closeCall())">
+        <!-- 表单：输入任务 -->
+        <div v-if="phase === 'form'" class="call">
           <div class="call__est">
             <AppIcon name="coins" :size="17" />
             <span>{{ t('预估 {e} · 余额 {b}', { e: money(estCost(item)), b: money(wallet.wallet.balance) }) }}</span>
           </div>
           <textarea v-model="prompt" class="call__prompt" rows="4" :placeholder="t('描述你要完成的任务…')" />
         </div>
+
+        <!-- 执行中：实时终端 -->
+        <div v-else-if="phase === 'run'" class="call-run">
+          <TaskTerminal :task-id="activeTaskId" :agent="item.name" status="running" @finish="onTaskFinish" />
+          <p class="call-run__hint">{{ t('正在「{n}」的电脑上执行，这里实时显示输出', { n: item.vendor }) }}</p>
+        </div>
+
+        <!-- 完成：结果 -->
+        <div v-else-if="phase === 'done'" class="call-done">
+          <div class="call-done__head" :class="runResult?.ok ? 'ok' : 'fail'">
+            <AppIcon :name="runResult?.ok ? 'check-circle' : 'alert-circle'" :size="22" />
+            <div>
+              <div class="call-done__title">{{ runResult?.ok ? t('执行完成') : t('执行失败') }}</div>
+              <div class="call-done__meta">
+                {{ t('tokens {t} · 费用 {c}', { t: runResult?.tokens || 0, c: money(runResult?.cost || 0) }) }}
+              </div>
+            </div>
+          </div>
+          <pre class="call-done__output mono">{{ runResult?.output || '' }}</pre>
+        </div>
+
         <template #footer>
-          <AppButton variant="ghost" @click="callOpen = false">{{ t('取消') }}</AppButton>
-          <AppButton variant="primary" icon="send" :loading="calling" @click="doCall">{{ t('开始调用') }}</AppButton>
+          <template v-if="phase === 'form'">
+            <AppButton variant="ghost" @click="closeCall">{{ t('取消') }}</AppButton>
+            <AppButton variant="primary" icon="send" :loading="calling" @click="doCall">{{ t('开始调用') }}</AppButton>
+          </template>
+          <template v-else-if="phase === 'run'">
+            <AppButton variant="ghost" @click="closeCall">{{ t('关闭（后台继续）') }}</AppButton>
+          </template>
+          <template v-else>
+            <AppButton variant="ghost" @click="again">{{ t('再来一次') }}</AppButton>
+            <AppButton variant="primary" @click="closeCall">{{ t('完成') }}</AppButton>
+          </template>
         </template>
       </AppModal>
     </template>
@@ -350,6 +423,29 @@ function collect() {
 .call__prompt:focus {
   border-color: var(--brand);
   box-shadow: 0 0 0 3px var(--brand-soft);
+}
+
+.call-run { margin-top: 4px; }
+.call-run__hint { margin-top: 10px; font-size: 12px; color: var(--text-weak); line-height: 1.7; }
+
+.call-done { margin-top: 4px; }
+.call-done__head { display: flex; align-items: center; gap: 12px; border-radius: 10px; padding: 12px 14px; }
+.call-done__head.ok { color: var(--success); background: var(--success-soft); }
+.call-done__head.fail { color: var(--danger); background: var(--danger-soft); }
+.call-done__title { font-size: 14px; font-weight: 600; }
+.call-done__meta { margin-top: 2px; font-size: 12px; opacity: 0.85; }
+.call-done__output {
+  margin: 12px 0 0;
+  padding: 12px;
+  max-height: 260px;
+  overflow: auto;
+  background: #0a0e14;
+  border-radius: 10px;
+  color: #c9d1d9;
+  font-size: 12.5px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
 .main-grid { margin-top: 16px; }

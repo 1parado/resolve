@@ -11,6 +11,11 @@ export const useTasksStore = defineStore('tasks', () => {
     items.value = getData().tasks.map((t) => ({ ...t }))
   }
 
+  /** 从后端拉取任务列表 */
+  async function refresh() {
+    items.value = await tasksApi.list()
+  }
+
   async function create(input: { title: string; agent: string; agentIcon: string; agentAccent: string; type: TaskType; schedule?: string }) {
     const t = await tasksApi.create(input)
     sync()
@@ -27,5 +32,5 @@ export const useTasksStore = defineStore('tasks', () => {
     sync()
   }
 
-  return { items, sync, create, cancel, rerun }
+  return { items, sync, refresh, create, cancel, rerun }
 })

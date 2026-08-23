@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProfileStore } from '@/stores/profile'
 import { useUiStore } from '@/stores/ui'
@@ -14,14 +14,52 @@ import StatusDot from '@/components/base/StatusDot.vue'
 import OsBadge from '@/components/base/OsBadge.vue'
 import EmptyState from '@/components/base/EmptyState.vue'
 import ContributionHeatmap from '@/components/profile/ContributionHeatmap.vue'
+import TaskTerminal from '@/components/runtime/TaskTerminal.vue'
+import { runtimeApi } from '@/api'
 import { t } from '@/i18n'
 import { esc, fmtNum, hexA, identicon, money, timeAgo } from '@/utils/format'
+import type { RuntimeTask } from '@/types'
 
 const router = useRouter()
 const profile = useProfileStore()
 const ui = useUiStore()
 
 const detail = ref<{ open: boolean; id: string }>({ open: false, id: '' })
+
+/* ---------- 节点执行记录（B 侧可视化） ---------- */
+const nodeTasks = ref<RuntimeTask[]>([])
+const nodeTaskModal = ref<{ open: boolean; task: RuntimeTask | null }>({ open: false, task: null })
+let nodeTaskTimer: ReturnType<typeof setInterval> | null = null
+
+async function loadNodeTasks() {
+  if (!profile.node.id) return
+  try {
+    nodeTasks.value = await runtimeApi.list('node')
+  } catch {
+    /* 未登录/无权限等忽略 */
+  }
+}
+
+function openNodeTask(t: RuntimeTask) {
+  nodeTaskModal.value = { open: true, task: t }
+}
+function closeNodeTask() {
+  nodeTaskModal.value = { open: false, task: null }
+}
+function onNodeTaskFinish() {
+  loadNodeTasks()
+}
+
+onMounted(() => {
+  loadNodeTasks()
+  // 有运行中任务时定时刷新列表
+  nodeTaskTimer = setInterval(() => {
+    if (nodeTasks.value.some((x) => x.status === 'running')) loadNodeTasks()
+  }, 4000)
+})
+onUnmounted(() => {
+  if (nodeTaskTimer) clearInterval(nodeTaskTimer)
+})
 
 function openDetail(id: string) {
   detail.value = { open: true, id }
@@ -133,7 +171,7 @@ const nodeIsConnected = () => profile.node.connected
               <span class="node__name">{{ profile.node.name }}</span>
               <StatusDot status="online" :label="t('在线')" />
             </div>
-            <div class="node__ip mono">{{ profile.node.ip }}:{{ profile.node.port }}</div>
+            <div class="node__ip mono">{{ profile.node.ip ? profile.node.ip + ':' + profile.node.port : t('本机 node-agent · 自动扫描接入') }}</div>
             <div class="node__tags">
               <AppTag icon="layers">{{ profile.node.runtime }}</AppTag>
               <AppTag :variant="profile.node.visibility === 'public' ? 'brand' : 'warn'" :icon="profile.node.visibility === 'public' ? 'globe' : 'lock'">
@@ -151,6 +189,32 @@ const nodeIsConnected = () => profile.node.connected
             :desc="t('扫描本地或云端 Agent，可视化配置 IP、端口与模型后一键发布到个人主页。')"
             :action-text="t('立即接入')"
             @action="router.push('/connect')"
+          />
+        </AppCard>
+
+        <AppCard pad="none">
+          <template #head>
+            <div class="card-title"><AppIcon name="terminal" :size="16" class="ico" /><span>{{ t('节点执行记录') }}</span></div>
+            <button class="card-link" @click="loadNodeTasks">{{ t('刷新') }}</button>
+          </template>
+          <div v-if="nodeTasks.length" class="node-tasks">
+            <button v-for="x in nodeTasks.slice(0, 8)" :key="x.taskId" type="button" class="nt" @click="openNodeTask(x)">
+              <span class="nt__dot" :class="'d-' + x.status" />
+              <span class="nt__main">
+                <span class="nt__name">{{ x.agent }}</span>
+                <span class="nt__sub mono">{{ x.prompt.slice(0, 32) }}{{ x.prompt.length > 32 ? '…' : '' }}</span>
+              </span>
+              <span class="nt__meta">
+                <span class="nt__time">{{ timeAgo(x.startedAt) }}</span>
+                <span class="nt__cost num">{{ x.status === 'running' ? t('执行中') : money(x.cost) }}</span>
+              </span>
+            </button>
+          </div>
+          <EmptyState
+            v-else
+            icon="terminal"
+            :title="t('暂无执行记录')"
+            :desc="t('其他人调用你节点上的 Agent 时，执行过程会实时显示在这里')"
           />
         </AppCard>
 
@@ -198,6 +262,27 @@ const nodeIsConnected = () => profile.node.connected
       <template #footer>
         <AppButton icon="copy" @click="copyLink">{{ t('复制分享链接') }}</AppButton>
         <AppButton variant="ghost" @click="closeDetail">{{ t('关闭') }}</AppButton>
+      </template>
+    </AppModal>
+
+    <!-- 节点执行记录详情（实时终端） -->
+    <AppModal
+      :model-value="nodeTaskModal.open"
+      :title="(nodeTaskModal.task?.agent || '') + (nodeTaskModal.task?.status === 'running' ? ' · ' + t('执行中') : '')"
+      :subtitle="nodeTaskModal.task?.prompt"
+      :width="640"
+      @update:model-value="closeNodeTask"
+    >
+      <TaskTerminal
+        v-if="nodeTaskModal.task"
+        :task-id="nodeTaskModal.task.taskId"
+        :initial-log="nodeTaskModal.task.log"
+        :status="nodeTaskModal.task.status"
+        :agent="nodeTaskModal.task.agent"
+        @finish="onNodeTaskFinish"
+      />
+      <template #footer>
+        <AppButton variant="ghost" @click="closeNodeTask">{{ t('关闭') }}</AppButton>
       </template>
     </AppModal>
   </div>
@@ -300,6 +385,29 @@ const nodeIsConnected = () => profile.node.connected
 .tx-withdraw { background: var(--warn-soft); color: var(--warn); }
 .card-link { font-size: 12.5px; color: var(--brand); cursor: pointer; }
 .card-link:hover { text-decoration: underline; }
+
+.node-tasks { padding: 4px 8px; display: flex; flex-direction: column; gap: 2px; }
+.nt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: left;
+  transition: background var(--dur) var(--ease);
+}
+.nt:hover { background: var(--surface-hover); }
+.nt__dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
+.nt__dot.d-running { background: #f0b429; animation: nblink 1s infinite; }
+.nt__dot.d-done { background: var(--success); }
+.nt__dot.d-failed, .nt__dot.d-timeout { background: var(--danger); }
+@keyframes nblink { 50% { opacity: 0.25; } }
+.nt__main { flex: 1 1 auto; min-width: 0; }
+.nt__name { font-size: 13px; font-weight: 600; color: var(--text-strong); }
+.nt__sub { margin-top: 2px; font-size: 11.5px; color: var(--text-faint); display: block; }
+.nt__meta { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex: 0 0 auto; }
+.nt__time { font-size: 11px; color: var(--text-faint); }
+.nt__cost { font-size: 12px; }
 
 .detail__brand {
   width: 54px;

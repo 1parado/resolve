@@ -30,3 +30,13 @@ __pycache__/
 .env
 .env.local
 .env.*.local
+
+# 数据/运行时产物（含真实用户与 token，切勿提交）
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite
+*.sqlite3
+e2e-state.json
+backend/e2e-state.json
